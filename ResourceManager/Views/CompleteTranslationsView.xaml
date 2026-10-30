@@ -1,0 +1,122 @@
+﻿<UserControl  x:Class="ResourceManager.Views.CompleteTranslationsView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ResourceManager.Views"
+        mc:Ignorable="d">
+    
+        <Grid Background="#F7F8FA">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="360" />
+                <ColumnDefinition Width="400" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Lewa lista kluczy -->
+            <Border Grid.Column="0"
+                Background="White"
+                BorderBrush="#E5E7EB"
+                BorderThickness="1,0,0,0"
+                Padding="20">
+
+                <DockPanel LastChildFill="True">
+
+                    <TextBlock Text="Translations"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           Foreground="#26352D"
+                           Margin="0,0,0,20"
+                           DockPanel.Dock="Top"/>
+
+                    <ListBox x:Name="IncompleteEntriesList"
+                         SelectionChanged="IncompleteEntriesList_SelectionChanged"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         SelectionMode="Single">
+
+                    <ListBox.Resources>
+                        <DataTemplate x:Key="TranslationItemTemplate">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="⚪"
+                                   Margin="0,0,8,0"
+                                   FontSize="14"/>
+
+                                <TextBlock Text="{Binding}"
+                                VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.Resources>
+
+                    <ListBox.ItemTemplate>
+                        <StaticResource ResourceKey="TranslationItemTemplate"/>
+                    </ListBox.ItemTemplate>
+
+                </ListBox>
+
+                </DockPanel>
+            </Border>
+
+        <StackPanel Grid.Column="1">
+            <Button Content="Wybierz folder z zasobami"
+             Click="SelectFolder_Click"/>
+            
+            <TextBlock Text="Resource details"
+               FontSize="22"
+               FontWeight="SemiBold"
+               Margin="0,0,0,25"/>
+
+            <TextBlock Text="Name"/>
+            <TextBox x:Name="NameTextBox"
+             Margin="0,5,0,15"
+             IsReadOnly="True"/>
+
+            <TextBlock Text="Polish value"/>
+            <TextBox x:Name="ValueTextBox"
+             Margin="0,5,0,15"
+             Height="70"
+             TextWrapping="Wrap"
+             AcceptsReturn="True"
+             IsReadOnly="False"/>
+
+            <TextBlock Text="Comment"/>
+            <TextBox x:Name="CommentTextBox"
+             Margin="0,5,0,15"
+             Height="60"
+             TextWrapping="Wrap"
+             AcceptsReturn="True"
+             IsReadOnly="False"/>
+
+            <TextBlock Text="English value"/>
+            <TextBox x:Name="EnglishValueTextBox"
+             Margin="0,5,0,15"
+             Height="70"
+             TextWrapping="Wrap"
+             AcceptsReturn="True"
+             IsReadOnly="False"/>
+
+            <Button Content="Zatwierdź i następny"
+            Click="ApproveAndNext_Click"/>
+
+            <StackPanel Orientation="Horizontal"
+            HorizontalAlignment="Right"
+            Margin="0,0,0,15">
+
+                <Button Content="←"
+                Width="35"
+                Height="30"
+                Click="PreviousEntry_Click"
+                Margin="0,0,8,0"/>
+
+                <Button Content="→"
+                Width="35"
+                Height="30"
+                Click="NextEntry_Click"/>
+
+            </StackPanel>
+
+        </StackPanel>
+        </Grid>
+
+</UserControl>
