@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ResourceManager.Services
+namespace ResourceManager.Enums
 {
-    class TranslationService
+    public enum TranslationStatus
     {
+        NotStarted,
+        Current,
+        Approved
     }
 }

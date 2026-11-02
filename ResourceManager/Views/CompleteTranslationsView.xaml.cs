@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using ResourceManager.Enums;
 using ResourceManager.Models;
 using ResourceManager.Services;
 using System;
@@ -13,6 +14,8 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using static ResourceManager.Services.TranslationApiClient;
+
 
 namespace ResourceManager.Views
 {
@@ -24,7 +27,10 @@ namespace ResourceManager.Views
         private readonly ResourceReader _resourceReader = new();
         private List<ResourceEntry> missingTranslations = new();
         private Dictionary<string, string> approvedTranslations = new();
+        private string? englishFilePath;
         private int actual_id = 0;
+        private readonly TranslationApiClient _translationApiClient = new();
+        private Dictionary<string, string> aiTranslations = new();
 
 
 
@@ -33,7 +39,7 @@ namespace ResourceManager.Views
             InitializeComponent();
         }
 
-        private void SelectFolder_Click(object sender, RoutedEventArgs e)
+        private async void SelectFolder_Click(object sender, RoutedEventArgs e)
         {
             approvedTranslations.Clear();
             actual_id = 0;
@@ -51,14 +57,45 @@ namespace ResourceManager.Views
 
                 string englishFile = System.IO.Path.Combine(
                     resourcesDirectory, "Resources.en-US.resx");
+                englishFilePath = englishFile;
 
                 missingTranslations = _resourceReader.FindMissingTranslations(
                 polishFile,
                 englishFile);
 
-                IncompleteEntriesList.ItemsSource = missingTranslations
-                    .Select(resource => resource.Name)
-                    .ToList();
+                IncompleteEntriesList.ItemsSource = missingTranslations;
+
+                if (missingTranslations.Count > 0)
+                {
+                    try
+                    {
+                        var itemsToTranslate = missingTranslations
+                            .Select(resource => new TranslationApiItem
+                            {
+                                Key = resource.Name,
+                                PolishText = resource.Value,
+                                Comment = resource.Comment
+                            })
+                            .ToList();
+
+                        aiTranslations = await _translationApiClient.TranslateAsync(
+                            itemsToTranslate);
+
+                        MessageBox.Show(
+                            $"Otrzymano {aiTranslations.Count} propozycji tłumaczeń.",
+                            "Tłumaczenie AI",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(
+                            $"Nie udało się pobrać tłumaczeń AI:\n{ex.Message}",
+                            "Błąd AI",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                    }
+                }
 
                 if (missingTranslations.Count > 0)
                 {
@@ -68,7 +105,8 @@ namespace ResourceManager.Views
                     ValueTextBox.Text = firstResource.Value;
                     CommentTextBox.Text = firstResource.Comment;
                     EnglishValueTextBox.Text = firstResource.EnglishValue;
- 
+                    IncompleteEntriesList.SelectedIndex = actual_id;
+
                 }
             }
         }
@@ -94,23 +132,41 @@ namespace ResourceManager.Views
 
         private void DisplayCurrentEntry()
         {
-            var Resource = missingTranslations[actual_id];
+            if (actual_id < 0 || actual_id >= missingTranslations.Count)
+                return;
 
-            NameTextBox.Text = Resource.Name;
-            ValueTextBox.Text = Resource.Value;
-            CommentTextBox.Text = Resource.Comment;
-            EnglishValueTextBox.Text = Resource.EnglishValue;
+            var resource = missingTranslations[actual_id];
 
-            EnglishValueTextBox.Text =
-            approvedTranslations.TryGetValue(Resource.Name, out var translation)
-            ? translation
-            : Resource.EnglishValue;
+            NameTextBox.Text = resource.Name;
+            ValueTextBox.Text = resource.Value;
+            CommentTextBox.Text = resource.Comment;
+
+            if (approvedTranslations.TryGetValue(resource.Name, out var approved))
+            {
+                EnglishValueTextBox.Text = approved;
+            }
+            else if (aiTranslations.TryGetValue(resource.Name, out var suggestion))
+            {
+                EnglishValueTextBox.Text = suggestion;
+            }
+            else
+            {
+                EnglishValueTextBox.Text = resource.EnglishValue;
+            }
         }
 
         private void IncompleteEntriesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             actual_id = IncompleteEntriesList.SelectedIndex;
+
+            if (actual_id < 0 || actual_id >= missingTranslations.Count)
+                return;
+
+            missingTranslations[actual_id].Status = TranslationStatus.Current;
+
             DisplayCurrentEntry();
+
+            IncompleteEntriesList.Items.Refresh();
         }
 
         private void ApproveAndNext_Click(object sender, RoutedEventArgs e)
@@ -118,10 +174,51 @@ namespace ResourceManager.Views
             string translation = EnglishValueTextBox.Text.Trim();
             var resource = missingTranslations[actual_id];
             approvedTranslations[resource.Name] = translation;
+            resource.Status = TranslationStatus.Approved;
             if (actual_id < missingTranslations.Count - 1)
             {
                 actual_id++;
                 IncompleteEntriesList.SelectedIndex = actual_id;
+            }
+            IncompleteEntriesList.Items.Refresh();
+        }
+
+        private void SaveTranslationToResx(string key, string translation)
+        {
+            if (string.IsNullOrEmpty(englishFilePath))
+                throw new InvalidOperationException("Nie wybrano pliku Resources.en-US.resx.");
+
+            var document = System.Xml.Linq.XDocument.Load(englishFilePath);
+
+            var dataElement = document.Root?
+                .Elements("data")
+                .FirstOrDefault(element =>
+                    (string?)element.Attribute("name") == key);
+
+            if (dataElement != null) dataElement.Element("value")!.Value = translation;
+            
+            else
+            {
+                // Add translation
+                document.Root?.Add(
+                new System.Xml.Linq.XElement("data",
+                    new System.Xml.Linq.XAttribute("name", key),
+                    new System.Xml.Linq.XAttribute(System.Xml.Linq.XNamespace.Xml + "space", "preserve"),
+                    new System.Xml.Linq.XElement("value", translation)
+                    )
+);
+            }
+
+            document.Save(englishFilePath);
+        }
+
+        private void SaveAll_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var translation in approvedTranslations)
+            {
+                SaveTranslationToResx(
+                    translation.Key,
+                    translation.Value);
             }
         }
     }

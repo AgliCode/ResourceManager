@@ -11,9 +11,13 @@
                 <ColumnDefinition Width="360" />
                 <ColumnDefinition Width="400" />
             </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-            <!-- Lewa lista kluczy -->
-            <Border Grid.Column="0"
+        <!-- Lewa lista kluczy -->
+            <Border Grid.Column="0" Grid.Row="0"
                 Background="White"
                 BorderBrush="#E5E7EB"
                 BorderThickness="1,0,0,0"
@@ -36,18 +40,20 @@
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          SelectionMode="Single">
 
-                    <ListBox.Resources>
-                        <DataTemplate x:Key="TranslationItemTemplate">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="⚪"
-                                   Margin="0,0,8,0"
-                                   FontSize="14"/>
+                        <ListBox.Resources>
+                            <DataTemplate x:Key="TranslationItemTemplate">
+                                <StackPanel Orientation="Horizontal">
+									<Ellipse Width="10"
+					                     Height="10"
+					                     Margin="0,0,8,0"
+					                     VerticalAlignment="Center"
+					                     Fill="{Binding StatusColor}"/>
 
-                                <TextBlock Text="{Binding}"
-                                VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.Resources>
+                                    <TextBlock Text="{Binding Name}"
+                                    VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.Resources>
 
                     <ListBox.ItemTemplate>
                         <StaticResource ResourceKey="TranslationItemTemplate"/>
@@ -58,10 +64,10 @@
                 </DockPanel>
             </Border>
 
-        <StackPanel Grid.Column="1">
+        <StackPanel Grid.Column="1" Grid.Row="0">
             <Button Content="Wybierz folder z zasobami"
              Click="SelectFolder_Click"/>
-            
+
             <TextBlock Text="Resource details"
                FontSize="22"
                FontWeight="SemiBold"
@@ -117,6 +123,19 @@
             </StackPanel>
 
         </StackPanel>
-        </Grid>
+    <Button Grid.Row="1"
+        Grid.ColumnSpan="2"
+        Content="Zapisz wszystko"
+        Click="SaveAll_Click"
+        Height="45"
+        Margin="20,10,20,15"
+        Background="#26352D"
+        Foreground="White"
+        FontWeight="SemiBold"
+        FontSize="14"
+        BorderThickness="0"
+        Cursor="Hand"/>
+    </Grid>
+
 
 </UserControl>
