@@ -54,7 +54,7 @@ public class TranslationApiClient
         var result = await response.Content.ReadFromJsonAsync<TranslationApiResponse>();
 
         if (result == null)
-            throw new Exception("Nie udało się odczytać odpowiedzi API.");
+            throw new Exception("Failed to read the API response.");
 
         return result.Translations.ToDictionary(
             item => item.Key,

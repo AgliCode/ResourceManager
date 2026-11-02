@@ -110,12 +110,16 @@
             Margin="0,0,0,15">
 
                 <Button Content="←"
+                x:Name="PreviousButton"
+                IsEnabled="False"
                 Width="35"
                 Height="30"
                 Click="PreviousEntry_Click"
                 Margin="0,0,8,0"/>
 
                 <Button Content="→"
+                x:Name="NextButton"
+                IsEnabled="False"
                 Width="35"
                 Height="30"
                 Click="NextEntry_Click"/>

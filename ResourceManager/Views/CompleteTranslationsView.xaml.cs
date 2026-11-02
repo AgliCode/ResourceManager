@@ -19,9 +19,7 @@ using static ResourceManager.Services.TranslationApiClient;
 
 namespace ResourceManager.Views
 {
-    /// <summary>
-    /// Logika interakcji dla klasy CompleteTranslationsView.xaml
-    /// </summary>
+
     public partial class CompleteTranslationsView : UserControl
     {
         private readonly ResourceReader _resourceReader = new();
@@ -31,6 +29,7 @@ namespace ResourceManager.Views
         private int actual_id = 0;
         private readonly TranslationApiClient _translationApiClient = new();
         private Dictionary<string, string> aiTranslations = new();
+        private readonly ResxWriter _resxWriter = new();
 
 
 
@@ -41,11 +40,25 @@ namespace ResourceManager.Views
 
         private async void SelectFolder_Click(object sender, RoutedEventArgs e)
         {
+
             approvedTranslations.Clear();
+            aiTranslations.Clear();
             actual_id = 0;
+
+            NameTextBox.Clear();
+            ValueTextBox.Clear();
+            CommentTextBox.Clear();
+            EnglishValueTextBox.Clear();
+
+            PreviousButton.IsEnabled = false;
+            NextButton.IsEnabled = false;
+
+            IncompleteEntriesList.ItemsSource = null;
+            missingTranslations.Clear();
+
             var dialog = new OpenFolderDialog
             {
-                Title = "Wybierz folder z plikami Resources.resx"
+                Title = "Select a folder containing Resources.resx files."
             };
 
             if (dialog.ShowDialog() == true)
@@ -57,16 +70,54 @@ namespace ResourceManager.Views
 
                 string englishFile = System.IO.Path.Combine(
                     resourcesDirectory, "Resources.en-US.resx");
-                englishFilePath = englishFile;
+                
 
-                missingTranslations = _resourceReader.FindMissingTranslations(
-                polishFile,
-                englishFile);
+                //Security check
+                if (!System.IO.File.Exists(polishFile))
+                {
+                    MessageBox.Show(
+                        "The Resources.resx file was not found in the selected folder.",
+                        "File Not Found",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+
+                    return;
+                }
+                if (!System.IO.File.Exists(englishFile))
+                {
+                    MessageBox.Show(
+                        "The Resources.en-US.resx file was not found in the selected folder.",
+                        "File Not Found",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+
+                    return;
+                }
+
+                try
+                {
+                    missingTranslations = _resourceReader.FindMissingTranslations(
+                    polishFile,
+                    englishFile);
+                    englishFilePath = englishFile;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                    $"Failed to read the RESX files.\n\nDetails: {ex.Message}",
+                    "File Read Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+
+                    return;
+                }
 
                 IncompleteEntriesList.ItemsSource = missingTranslations;
+                UpdateNavigationButtons();
 
                 if (missingTranslations.Count > 0)
                 {
+                    
                     try
                     {
                         var itemsToTranslate = missingTranslations
@@ -86,6 +137,7 @@ namespace ResourceManager.Views
                             "Tłumaczenie AI",
                             MessageBoxButton.OK,
                             MessageBoxImage.Information);
+
                     }
                     catch (Exception ex)
                     {
@@ -95,27 +147,30 @@ namespace ResourceManager.Views
                             MessageBoxButton.OK,
                             MessageBoxImage.Error);
                     }
-                }
 
-                if (missingTranslations.Count > 0)
+                    actual_id = 0;
+                    IncompleteEntriesList.SelectedIndex = 0;
+                    DisplayCurrentEntry();
+                }
+                else
                 {
-                    var firstResource = missingTranslations[actual_id];
+                    IncompleteEntriesList.ItemsSource = null;
 
-                    NameTextBox.Text = firstResource.Name;
-                    ValueTextBox.Text = firstResource.Value;
-                    CommentTextBox.Text = firstResource.Comment;
-                    EnglishValueTextBox.Text = firstResource.EnglishValue;
-                    IncompleteEntriesList.SelectedIndex = actual_id;
-
+                    MessageBox.Show(
+                        "No missing translations were found.",
+                        "Translation Check",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
                 }
+
             }
+            
         }
 
         private void NextEntry_Click(object sender, RoutedEventArgs e)
         {
-            if (actual_id < 0) return;
-            actual_id++;
-            IncompleteEntriesList.SelectedIndex = actual_id;
+            
+            actual_id = (actual_id + 1) % missingTranslations.Count;
 
             DisplayCurrentEntry();
 
@@ -123,9 +178,7 @@ namespace ResourceManager.Views
 
         private void PreviousEntry_Click(object sender, RoutedEventArgs e)
         {
-            if (actual_id > missingTranslations.Count - 1) return;
-            actual_id--;
-            IncompleteEntriesList.SelectedIndex = actual_id;
+            actual_id = (actual_id - 1) % missingTranslations.Count;
 
             DisplayCurrentEntry();
         }
@@ -135,6 +188,7 @@ namespace ResourceManager.Views
             if (actual_id < 0 || actual_id >= missingTranslations.Count)
                 return;
 
+            IncompleteEntriesList.SelectedIndex = actual_id;
             var resource = missingTranslations[actual_id];
 
             NameTextBox.Text = resource.Name;
@@ -183,43 +237,19 @@ namespace ResourceManager.Views
             IncompleteEntriesList.Items.Refresh();
         }
 
-        private void SaveTranslationToResx(string key, string translation)
-        {
-            if (string.IsNullOrEmpty(englishFilePath))
-                throw new InvalidOperationException("Nie wybrano pliku Resources.en-US.resx.");
-
-            var document = System.Xml.Linq.XDocument.Load(englishFilePath);
-
-            var dataElement = document.Root?
-                .Elements("data")
-                .FirstOrDefault(element =>
-                    (string?)element.Attribute("name") == key);
-
-            if (dataElement != null) dataElement.Element("value")!.Value = translation;
-            
-            else
-            {
-                // Add translation
-                document.Root?.Add(
-                new System.Xml.Linq.XElement("data",
-                    new System.Xml.Linq.XAttribute("name", key),
-                    new System.Xml.Linq.XAttribute(System.Xml.Linq.XNamespace.Xml + "space", "preserve"),
-                    new System.Xml.Linq.XElement("value", translation)
-                    )
-);
-            }
-
-            document.Save(englishFilePath);
-        }
+        
 
         private void SaveAll_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var translation in approvedTranslations)
-            {
-                SaveTranslationToResx(
-                    translation.Key,
-                    translation.Value);
-            }
+          _resxWriter.SaveTranslationToResx(approvedTranslations, englishFilePath); 
+        }
+
+        private void UpdateNavigationButtons()
+        {
+            bool hasEntries = missingTranslations.Count > 0;
+
+            PreviousButton.IsEnabled = hasEntries;
+            NextButton.IsEnabled = hasEntries;
         }
     }
 }
