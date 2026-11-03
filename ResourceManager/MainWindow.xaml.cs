@@ -54,6 +54,12 @@ namespace ResourceManager
 
             MainContent.Content = view;
         }
+        private async void BrowseResources_Click(object sender, RoutedEventArgs e)
+        {
+            var view = new BrowseResources(ProjectContext);
+
+            MainContent.Content = view;
+        }
 
         private async void SelectProjectFolder_Click(object sender, RoutedEventArgs e)
         {
