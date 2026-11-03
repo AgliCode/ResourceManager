@@ -44,14 +44,14 @@ public class TranslationService
         string prompt = $$"""
         You are a professional software localization translator.
 
-        Translate all provided Polish resource texts into English.
+        Translate all provided Polish resource texts into {{request.TargetLanguage}}.
 
         Rules:
         - Preserve every resource key exactly.
         - Translate every item.
         - Preserve placeholders such as {0}, {name} and format strings.
         - Preserve technical identifiers and markup.
-        - Use natural English suitable for a software application.
+        - Use natural language suitable for a software application.
         - Use comments as translation context.
         - Return only valid JSON.
         - Do not omit any resource.
@@ -61,7 +61,7 @@ public class TranslationService
          "translations": [
           {
             "key": "ResourceKey",
-            "englishText": "English translation"
+            "translatedText": "translation"
           }]
         }
 

@@ -10,6 +10,7 @@ public class TranslationApiClient
     public class TranslationApiRequest
     {
         public List<TranslationApiItem> Items { get; set; } = new();
+        public string TargetLanguage { get; set; } = "en-US";
     }
 
     public class TranslationApiItem
@@ -27,7 +28,7 @@ public class TranslationApiClient
     public class TranslationApiResult
     {
         public string Key { get; set; } = string.Empty;
-        public string EnglishText { get; set; } = string.Empty;
+        public string TranslatedText { get; set; } = string.Empty;
     }
 
     public TranslationApiClient()
@@ -38,10 +39,12 @@ public class TranslationApiClient
         };
     }
     public async Task<Dictionary<string, string>> TranslateAsync(
-    List<TranslationApiItem> items)
+    List<TranslationApiItem> items,
+     string targetLanguage = "en-US")
     {
         var request = new TranslationApiRequest
         {
+            TargetLanguage = targetLanguage,
             Items = items
         };
 
@@ -58,6 +61,6 @@ public class TranslationApiClient
 
         return result.Translations.ToDictionary(
             item => item.Key,
-            item => item.EnglishText);
+            item => item.TranslatedText);
     }
 }

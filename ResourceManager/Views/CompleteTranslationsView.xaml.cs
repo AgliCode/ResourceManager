@@ -30,16 +30,23 @@ namespace ResourceManager.Views
         private readonly TranslationApiClient _translationApiClient = new();
         private Dictionary<string, string> aiTranslations = new();
         private readonly ResxWriter _resxWriter = new();
+        private readonly ProjectContext _projectContext;
 
 
 
-        public CompleteTranslationsView()
+        public CompleteTranslationsView(ProjectContext projectContext)
         {
             InitializeComponent();
+            _projectContext = projectContext;
         }
 
-        private async void SelectFolder_Click(object sender, RoutedEventArgs e)
+        public async Task LoadTranslationsAsync()
         {
+            if (!_projectContext.IsProjectLoaded)
+            {
+                MessageBox.Show("No project folder has been selected.");
+                return;
+            }
 
             approvedTranslations.Clear();
             aiTranslations.Clear();
@@ -56,50 +63,11 @@ namespace ResourceManager.Views
             IncompleteEntriesList.ItemsSource = null;
             missingTranslations.Clear();
 
-            var dialog = new OpenFolderDialog
-            {
-                Title = "Select a folder containing Resources.resx files."
-            };
-
-            if (dialog.ShowDialog() == true)
-            {
-                string resourcesDirectory = dialog.FolderName;
-
-                string polishFile = System.IO.Path.Combine(
-                    resourcesDirectory, "Resources.resx");
-
-                string englishFile = System.IO.Path.Combine(
-                    resourcesDirectory, "Resources.en-US.resx");
-                
-
-                //Security check
-                if (!System.IO.File.Exists(polishFile))
-                {
-                    MessageBox.Show(
-                        "The Resources.resx file was not found in the selected folder.",
-                        "File Not Found",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Warning);
-
-                    return;
-                }
-                if (!System.IO.File.Exists(englishFile))
-                {
-                    MessageBox.Show(
-                        "The Resources.en-US.resx file was not found in the selected folder.",
-                        "File Not Found",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Warning);
-
-                    return;
-                }
-
                 try
                 {
                     missingTranslations = _resourceReader.FindMissingTranslations(
-                    polishFile,
-                    englishFile);
-                    englishFilePath = englishFile;
+                    _projectContext.PolishFilePath!,
+                    _projectContext.EnglishFilePath!);
                 }
                 catch (Exception ex)
                 {
@@ -163,9 +131,9 @@ namespace ResourceManager.Views
                         MessageBoxImage.Information);
                 }
 
-            }
-            
         }
+            
+        
 
         private void NextEntry_Click(object sender, RoutedEventArgs e)
         {
@@ -241,7 +209,7 @@ namespace ResourceManager.Views
 
         private void SaveAll_Click(object sender, RoutedEventArgs e)
         {
-          _resxWriter.SaveTranslationToResx(approvedTranslations, englishFilePath); 
+          _resxWriter.SaveTranslationToResx(approvedTranslations, _projectContext.EnglishFilePath); 
         }
 
         private void UpdateNavigationButtons()

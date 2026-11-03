@@ -5,8 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ResourceManager.Views"
         mc:Ignorable="d">
+
     
-        <Grid Background="#F7F8FA">
+
+    <Grid Background="#F7F8FA">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="360" />
                 <ColumnDefinition Width="400" />
@@ -65,8 +67,6 @@
             </Border>
 
         <StackPanel Grid.Column="1" Grid.Row="0">
-            <Button Content="Wybierz folder z zasobami"
-             Click="SelectFolder_Click"/>
 
             <TextBlock Text="Resource details"
                FontSize="22"

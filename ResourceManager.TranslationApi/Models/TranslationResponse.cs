@@ -10,5 +10,5 @@ public class TranslationResult
 {
     public string Key { get; set; } = string.Empty;
 
-    public string EnglishText { get; set; } = string.Empty;
+    public string TranslatedText { get; set; } = string.Empty;
 }
