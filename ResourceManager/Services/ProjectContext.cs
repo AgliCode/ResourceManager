@@ -8,11 +8,12 @@ public class ProjectContext
 
     public string? EnglishFilePath { get; private set; }
     public string? TargetLanguage { get; private set; }
+    public string[] ResxFiles { get; private set; }
 
     public bool IsProjectLoaded =>
         !string.IsNullOrWhiteSpace(ProjectDirectory);
 
-    public void SetProject(string directory, string baseFilePath, string targetFilePath, string targetLanguage)
+    public void SetProject(string directory, string baseFilePath, string targetFilePath, string targetLanguage, string[] resxFiles)
     {
         ProjectDirectory = directory;
 
@@ -21,5 +22,7 @@ public class ProjectContext
         EnglishFilePath = targetFilePath;
 
         TargetLanguage = targetLanguage;
+
+        ResxFiles = resxFiles;
     }
 }

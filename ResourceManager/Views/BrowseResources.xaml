@@ -59,7 +59,7 @@
                                   BorderBrush="#D9E0DB"
                                   Foreground="#333333"
                                   SelectedIndex="0">
-                            <ComboBoxItem Content="Resources.resx"/>
+
                         </ComboBox>
 
                         <Button Grid.Column="1"

@@ -41,7 +41,9 @@ namespace ResourceManager
 
         private void AddEntry_Click(object sender, RoutedEventArgs e)
         {
+            var view = new AddResourceView(ProjectContext, GeminiKeyStorage);
 
+            MainContent.Content = view;
         }
 
         private async void Dashboard_Click(object sender, RoutedEventArgs e)
@@ -151,7 +153,7 @@ namespace ResourceManager
 
             string? targetLanguage = (TargetLanguageComboBox.SelectedItem as ComboBoxItem)?.Tag?.ToString();
 
-            ProjectContext.SetProject(resourcesDirectory, baseFilePath, targetFilePath, targetLanguage);
+            ProjectContext.SetProject(resourcesDirectory, baseFilePath, targetFilePath, targetLanguage, _resxFiles);
             ResxSelectionOverlay.Visibility = Visibility.Collapsed;
             var view = new DashboardView(ProjectContext);
 

@@ -81,5 +81,90 @@ namespace ResourceManager.Services
                 newRoot
             ).Save(outputFilePath);
         }
+
+        public void AddEntryToResx(
+            string key,
+            string neutralValue,
+            string? comment,
+            string translatedValue,
+            string? baseFilePath,
+            string? targetFilePath)
+        {
+            if (string.IsNullOrWhiteSpace(baseFilePath) ||
+                string.IsNullOrWhiteSpace(targetFilePath))
+            {
+                throw new InvalidOperationException(
+                    "Resource file paths have not been configured.");
+            }
+
+            var baseDocument = System.Xml.Linq.XDocument.Load(baseFilePath);
+            var targetDocument = System.Xml.Linq.XDocument.Load(targetFilePath);
+
+            var baseRoot = baseDocument.Root
+                ?? throw new InvalidOperationException("Invalid base RESX file.");
+
+            var targetRoot = targetDocument.Root
+                ?? throw new InvalidOperationException("Invalid target RESX file.");
+
+            // Check whether the key already exists in either file.
+            bool keyExists =
+                baseRoot.Elements().Any(element =>
+                    element.Name.LocalName == "data" &&
+                    (string?)element.Attribute("name") == key)
+                ||
+                targetRoot.Elements().Any(element =>
+                    element.Name.LocalName == "data" &&
+                    (string?)element.Attribute("name") == key);
+
+            if (keyExists)
+            {
+                throw new InvalidOperationException(
+                    $"The resource key '{key}' already exists in one of the files.");
+            }
+
+            // Add entry to the base file.
+            baseRoot.Add(CreateDataElement(
+                baseRoot,
+                key,
+                neutralValue,
+                comment));
+
+            // Add entry to the target file.
+            targetRoot.Add(CreateDataElement(
+                targetRoot,
+                key,
+                translatedValue,
+                comment));
+
+            baseDocument.Save(baseFilePath);
+            targetDocument.Save(targetFilePath);
+        }
+
+        private System.Xml.Linq.XElement CreateDataElement(
+            System.Xml.Linq.XElement root,
+            string key,
+            string value,
+            string? comment = null)
+        {
+            var dataElement = new System.Xml.Linq.XElement(
+                root.Name.Namespace + "data",
+                new System.Xml.Linq.XAttribute("name", key),
+                new System.Xml.Linq.XAttribute(
+                    System.Xml.Linq.XNamespace.Xml + "space",
+                    "preserve"),
+                new System.Xml.Linq.XElement(
+                    root.Name.Namespace + "value",
+                    value));
+
+            if (!string.IsNullOrWhiteSpace(comment))
+            {
+                dataElement.Add(
+                    new System.Xml.Linq.XElement(
+                        root.Name.Namespace + "comment",
+                        comment));
+            }
+
+            return dataElement;
+        }
     }
 }

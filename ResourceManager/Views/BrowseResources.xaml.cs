@@ -27,14 +27,21 @@ namespace ResourceManager.Views
         {
             InitializeComponent();
             _projectContext = projectContext;
+
+            ResourceFileComboBox.ItemsSource = _projectContext.ResxFiles
+                .Select(System.IO.Path.GetFileName)
+                .ToList();
+            ResourceFileComboBox.SelectedIndex = 0;
         }
 
         private void Open_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                var resources = _resourceReader.ReadResources(
-                    _projectContext.PolishFilePath!);
+                string? selectedFileName = ResourceFileComboBox.SelectedItem as string;
+                string? selectedFilePath = _projectContext.ResxFiles
+                    .FirstOrDefault(path => System.IO.Path.GetFileName(path) == selectedFileName);
+                var resources = _resourceReader.ReadResources(selectedFilePath);
                 ResourcesDataGrid.ItemsSource = resources;
             }
             catch (Exception ex)
