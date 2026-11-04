@@ -2,6 +2,7 @@
 using ResourceManager.Enums;
 using ResourceManager.Models;
 using ResourceManager.Services;
+using ResourceManager.TranslationApi.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,13 +32,17 @@ namespace ResourceManager.Views
         private Dictionary<string, string> aiTranslations = new();
         private readonly ResxWriter _resxWriter = new();
         private readonly ProjectContext _projectContext;
+        private readonly GeminiKeyStorage _geminiKeyStorage;
 
 
 
-        public CompleteTranslationsView(ProjectContext projectContext)
+        public CompleteTranslationsView(
+            ProjectContext projectContext,
+            GeminiKeyStorage geminiKeyStorage)
         {
             InitializeComponent();
             _projectContext = projectContext;
+            _geminiKeyStorage = geminiKeyStorage;
         }
 
         public async Task LoadTranslationsAsync()
@@ -98,7 +103,7 @@ namespace ResourceManager.Views
                             .ToList();
 
                         aiTranslations = await _translationApiClient.TranslateAsync(
-                            itemsToTranslate);
+                            itemsToTranslate, _geminiKeyStorage.ApiKey!, _projectContext.TargetLanguage!);
 
                         MessageBox.Show(
                             $"Otrzymano {aiTranslations.Count} propozycji tłumaczeń.",

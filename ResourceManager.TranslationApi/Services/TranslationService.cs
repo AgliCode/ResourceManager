@@ -10,26 +10,19 @@ namespace ResourceManager.TranslationApi.Services;
 public class TranslationService
 {
     private readonly HttpClient _httpClient;
-    private readonly IConfiguration _configuration;
 
-    public TranslationService(
-        HttpClient httpClient,
-        IConfiguration configuration)
+    public TranslationService(HttpClient httpClient)
     {
         _httpClient = httpClient;
-        _configuration = configuration;
     }
 
 
     public async Task<TranslationResponse> TranslateAsync(
-        TranslationRequest request)
+        TranslationRequest request,
+        string apiKey)
     {
-        // Gemini API key from the configuration 
-        string? apiKey = _configuration["Gemini:ApiKey"];
-
         if (string.IsNullOrWhiteSpace(apiKey))
-            throw new InvalidOperationException(
-                "Gemini API key is missing");
+            throw new ArgumentException("Gemini API key is missing.");
 
         if (request.Items.Count == 0)
             throw new ArgumentException(

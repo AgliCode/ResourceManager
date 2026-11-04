@@ -39,7 +39,8 @@ public class TranslationApiClient
         };
     }
     public async Task<Dictionary<string, string>> TranslateAsync(
-    List<TranslationApiItem> items,
+     List<TranslationApiItem> items,
+     string apiKey,
      string targetLanguage = "en-US")
     {
         var request = new TranslationApiRequest
@@ -48,10 +49,14 @@ public class TranslationApiClient
             Items = items
         };
 
-        var response = await _httpClient.PostAsJsonAsync(
-            "api/Translation",
-            request);
+        using var httpRequest = new HttpRequestMessage(
+        HttpMethod.Post,
+        "api/Translation");
 
+        httpRequest.Headers.Add("x-goog-api-key", apiKey);
+        httpRequest.Content = JsonContent.Create(request);
+
+        using var response = await _httpClient.SendAsync(httpRequest);
         response.EnsureSuccessStatusCode();
 
         var result = await response.Content.ReadFromJsonAsync<TranslationApiResponse>();

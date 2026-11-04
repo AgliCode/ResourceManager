@@ -22,7 +22,18 @@ public class TranslationController : ControllerBase
     {
         try
         {
-            var result = await _translationService.TranslateAsync(request);
+            if (!Request.Headers.TryGetValue("x-goog-api-key", out var apiKey) ||
+            string.IsNullOrWhiteSpace(apiKey))
+            {
+                return BadRequest(new
+                {
+                    error = "Gemini API key is missing."
+                });
+            }
+
+            var result = await _translationService.TranslateAsync(
+                request,
+                apiKey.ToString());
 
             return Ok(result);
         }

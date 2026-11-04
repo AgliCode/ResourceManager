@@ -7,18 +7,19 @@ public class ProjectContext
     public string? PolishFilePath { get; private set; }
 
     public string? EnglishFilePath { get; private set; }
+    public string? TargetLanguage { get; private set; }
 
     public bool IsProjectLoaded =>
         !string.IsNullOrWhiteSpace(ProjectDirectory);
 
-    public void SetProject(string directory)
+    public void SetProject(string directory, string baseFilePath, string targetFilePath, string targetLanguage)
     {
         ProjectDirectory = directory;
 
-        PolishFilePath = System.IO.Path.Combine(
-            directory, "Resources.resx");
+        PolishFilePath = baseFilePath;
 
-        EnglishFilePath = System.IO.Path.Combine(
-            directory, "Resources.en-US.resx");
+        EnglishFilePath = targetFilePath;
+
+        TargetLanguage = targetLanguage;
     }
 }

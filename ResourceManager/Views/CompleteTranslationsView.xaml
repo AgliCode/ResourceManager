@@ -94,7 +94,7 @@
              AcceptsReturn="True"
              IsReadOnly="False"/>
 
-            <TextBlock Text="English value"/>
+            <TextBlock Text="Translated value"/>
             <TextBox x:Name="EnglishValueTextBox"
              Margin="0,5,0,15"
              Height="70"

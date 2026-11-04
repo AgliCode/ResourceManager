@@ -1,5 +1,6 @@
 ﻿using ResourceManager.Models;
 using ResourceManager.Services;
+using ResourceManager.TranslationApi.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,10 +29,14 @@ namespace ResourceManager.Views
         private string? _outputFilePath;
         private readonly ResxWriter _resxWriter = new();
         const int batchSize = 300;
-        public AddNewLanguageView(ProjectContext projectContext)
+        private readonly GeminiKeyStorage _geminiKeyStorage;
+        public AddNewLanguageView(
+            ProjectContext projectContext,
+            GeminiKeyStorage geminiKeyStorage)
         {
             InitializeComponent();
             _projectContext = projectContext;
+            _geminiKeyStorage = geminiKeyStorage;
             TargetLanguageComboBox.SelectionChanged += TargetLanguageComboBox_SelectionChanged;
 
         }
@@ -199,7 +204,8 @@ namespace ResourceManager.Views
 
                     var batchTranslations = await _translationApiClient.TranslateAsync(
                         batch,
-                        languageCode);
+                        languageCode,
+                        _geminiKeyStorage.ApiKey!);
 
                     foreach (var translation in batchTranslations)
                     {
