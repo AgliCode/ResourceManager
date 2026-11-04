@@ -71,8 +71,8 @@ namespace ResourceManager.Views
                 try
                 {
                     missingTranslations = _resourceReader.FindMissingTranslations(
-                    _projectContext.PolishFilePath!,
-                    _projectContext.EnglishFilePath!);
+                    _projectContext.BaseFilePath!,
+                    _projectContext.TargetFilePath!);
                 }
                 catch (Exception ex)
                 {
@@ -214,7 +214,7 @@ namespace ResourceManager.Views
 
         private void SaveAll_Click(object sender, RoutedEventArgs e)
         {
-          _resxWriter.SaveTranslationToResx(approvedTranslations, _projectContext.EnglishFilePath); 
+          _resxWriter.SaveTranslationToResx(approvedTranslations, _projectContext.TargetFilePath); 
         }
 
         private void UpdateNavigationButtons()

@@ -43,8 +43,8 @@ namespace ResourceManager.Views
                 return;
             }
             //Statistics
-            allKeys = _resourceReader.ReadResources(_projectContext.PolishFilePath!);
-            missingTranslations = _resourceReader.FindMissingTranslations(_projectContext.PolishFilePath!, _projectContext.EnglishFilePath!);
+            allKeys = _resourceReader.ReadResources(_projectContext.BaseFilePath!);
+            missingTranslations = _resourceReader.FindMissingTranslations(_projectContext.BaseFilePath!, _projectContext.TargetFilePath!);
             allKeys_Count = allKeys.Count;
             missingTranslations_Count = missingTranslations.Count;
             translatedKeys_Count = (allKeys_Count - missingTranslations_Count);

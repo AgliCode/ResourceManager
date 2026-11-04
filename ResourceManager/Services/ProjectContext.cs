@@ -4,9 +4,9 @@ public class ProjectContext
 {
     public string? ProjectDirectory { get; private set; }
 
-    public string? PolishFilePath { get; private set; }
+    public string? BaseFilePath { get; private set; }
 
-    public string? EnglishFilePath { get; private set; }
+    public string? TargetFilePath { get; private set; }
     public string? TargetLanguage { get; private set; }
     public string[] ResxFiles { get; private set; }
 
@@ -17,9 +17,9 @@ public class ProjectContext
     {
         ProjectDirectory = directory;
 
-        PolishFilePath = baseFilePath;
+        BaseFilePath = baseFilePath;
 
-        EnglishFilePath = targetFilePath;
+        TargetFilePath = targetFilePath;
 
         TargetLanguage = targetLanguage;
 

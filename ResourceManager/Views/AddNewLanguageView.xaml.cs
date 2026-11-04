@@ -23,13 +23,13 @@ namespace ResourceManager.Views
     public partial class AddNewLanguageView : UserControl
     {
         private readonly ProjectContext _projectContext;
+        private readonly GeminiKeyStorage _geminiKeyStorage;
         private readonly ResourceReader _resourceReader = new();
         private List<NewLanguageEntry> entries = new();
         private readonly TranslationApiClient _translationApiClient = new();
         private string? _outputFilePath;
         private readonly ResxWriter _resxWriter = new();
         const int batchSize = 300;
-        private readonly GeminiKeyStorage _geminiKeyStorage;
         public AddNewLanguageView(
             ProjectContext projectContext,
             GeminiKeyStorage geminiKeyStorage)
@@ -108,7 +108,7 @@ namespace ResourceManager.Views
             try
             {
                 var resources = _resourceReader.ReadResources(
-                    _projectContext.PolishFilePath!);
+                    _projectContext.BaseFilePath!);
 
                 entries = resources.Select(resource => new NewLanguageEntry
                 {
@@ -232,7 +232,7 @@ namespace ResourceManager.Views
                     MessageBoxImage.Information);
 
                 _resxWriter.CreateTranslatedResx(
-                _projectContext.PolishFilePath!,
+                _projectContext.BaseFilePath!,
                 _outputFilePath!,
                 selectedEntries);
 

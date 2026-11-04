@@ -66,6 +66,11 @@ namespace ResourceManager
 
             MainContent.Content = view;
         }
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            var view = new SettingsView(ProjectContext, GeminiKeyStorage, this);
+            MainContent.Content = view;
+        }
 
         private void SelectProjectFolder_Click(object sender, RoutedEventArgs e)
         {
@@ -159,6 +164,15 @@ namespace ResourceManager
 
             MainContent.Content = view;
             await view.LoadStaticticAsync();
+        }
+
+        public void ShowFolderConfiguration()
+        {
+            FolderOverlay.Visibility = Visibility.Visible;
+            GeminiOverlay.Visibility = Visibility.Collapsed;
+            SettingsNavButton.IsChecked = false;
+            DashboardNavButton.IsChecked = true;
+
         }
 
     }

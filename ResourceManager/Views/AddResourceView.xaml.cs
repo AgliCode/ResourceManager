@@ -115,8 +115,8 @@ namespace ResourceManager.Views
                     neutralValue,
                     comment,
                     translatedValue,
-                    _projectContext.PolishFilePath,
-                    _projectContext.EnglishFilePath);
+                    _projectContext.BaseFilePath,
+                    _projectContext.TargetFilePath);
 
                 MessageBox.Show(
                     "The resource entry has been successfully added to both files.",
