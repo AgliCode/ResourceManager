@@ -9,6 +9,7 @@ public class ProjectContext
     public string? TargetFilePath { get; private set; }
     public string? TargetLanguage { get; private set; }
     public string[] ResxFiles { get; private set; }
+    
 
     public bool IsProjectLoaded =>
         !string.IsNullOrWhiteSpace(ProjectDirectory);

@@ -47,24 +47,52 @@ namespace ResourceManager.Views
                 .ToList()
                 .FindIndex(item => item.Tag?.ToString() == _projectContext.TargetLanguage);
 
-            if (string.IsNullOrWhiteSpace(_geminiKeyStorage.ApiKey))
+            UpdateApiKeyStatus();
+
+
+            ProjectFolderTextBox.Text = _projectContext.ProjectDirectory;
+            _mainWindow = mainWindow;
+        }
+        private void UpdateApiKeyStatus()
+        {
+            if (string.IsNullOrWhiteSpace(_geminiKeyStorage.ReadApiKey()))
             {
                 ApiKeyStatusBadge.Text = "Not configured";
-                ApiKeyStatusBadge.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fc3838"));
+                ApiKeyStatusBadge.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fc3838"));             
             }
             else
             {
                 ApiKeyStatusBadge.Text = "Configured";
-                ApiKeyStatusBadge.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3bfc38"));
-
+                ApiKeyStatusBadge.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#39734A"));
             }
-            ProjectFolderTextBox.Text = _projectContext.ProjectDirectory;
-            _mainWindow = mainWindow;
+            if (_geminiKeyStorage.SaveApiKeyLocally)
+            {
+               ApiKeyStorageStatusBadge.Text = "Configured";
+               ApiKeyStorageStatusBadge.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#39734A"));
+            }
+            else
+            {
+                ApiKeyStorageStatusBadge.Text = "Not configured";
+                ApiKeyStorageStatusBadge.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fc3838"));
+            }
         }
-
         public void Change_Click(object sender, EventArgs e)
         {
             _mainWindow.ShowFolderConfiguration();
+        }
+
+        private void RemoveKey_Click(object sender, RoutedEventArgs e)
+        {
+            _geminiKeyStorage.ClearApiKeyFromMemory();
+            _geminiKeyStorage.DeleteSavedApiKey();
+            UpdateApiKeyStatus();
+
+        }
+
+        private async void Configure_Click(object sender, RoutedEventArgs e)
+        {
+            await _mainWindow.ShowGeminiKeyConfiguration();
+            UpdateApiKeyStatus();
         }
     }
 }

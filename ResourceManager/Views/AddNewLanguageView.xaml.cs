@@ -205,7 +205,7 @@ namespace ResourceManager.Views
                     var batchTranslations = await _translationApiClient.TranslateAsync(
                         batch,
                         languageCode,
-                        _geminiKeyStorage.ApiKey!);
+                        _geminiKeyStorage.ReadApiKey()!);
 
                     foreach (var translation in batchTranslations)
                     {

@@ -57,7 +57,7 @@ namespace ResourceManager.Views
 
                 var translations = await _translationApiClient.TranslateAsync(
                     items,
-                    _geminiKeyStorage.ApiKey!,
+                    _geminiKeyStorage.ReadApiKey()!,
                     _projectContext.TargetLanguage!);
 
                 if (translations.TryGetValue(keyName, out string? translatedText))

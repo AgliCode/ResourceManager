@@ -4,8 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:ResourceManager.Views"
-             mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="800">
+             mc:Ignorable="d" d:DesignWidth="800">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid Margin="25">
@@ -191,6 +190,45 @@
                             </Grid>
                         </Border>
 
+                        <!-- Key saved on device status -->
+                        <Border Background="#FFFFFF"
+                        CornerRadius="8"
+                        Padding="15"
+                        Margin="0,0,0,18">
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel>
+                                    <TextBlock Text="Save API key on this device"
+                                   FontWeight="SemiBold"
+                                   Foreground="#444444"/>
+
+                                    <TextBlock x:Name="ApiKeyStorageStatusText"
+                                   Text="When enabled, your key is securely stored on this Windows device."
+                                   FontSize="12"
+                                   Foreground="#777777"
+                                   Margin="0,5,0,0"/>   
+                                </StackPanel>
+
+                                <Border Grid.Column="1"
+                                Background="#E2F1E4"
+                                CornerRadius="8"
+                                Padding="12,5"
+                                VerticalAlignment="Center">
+
+                                    <TextBlock x:Name="ApiKeyStorageStatusBadge"
+                                   Text="Configured"
+                                   Foreground="#39734A"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+
 
                         <!-- API key input -->
                         <TextBlock Text="API key"
@@ -203,36 +241,16 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-
-                            <PasswordBox x:Name="ApiKeyPasswordBox"
-                                         Grid.Column="0"
-                                         Padding="12,10"
-                                         FontSize="13"
-                                         Height="38"
-                                         Background="#FFFFFF"
-                                         BorderBrush="#E5E5E5"/>
-
-                            <Button Grid.Column="1"
-                                    Content="Show"
-                                    Margin="10,0,0,0"
-                                    Padding="18,8"
-                                    Background="#FFFFFF"
-                                    Foreground="#555555"
-                                    BorderThickness="0"/>
                         </Grid>
 
 
-                        <!-- Remember me -->
-                        <CheckBox x:Name="RememberMeCheckBox"
-                                  Content="Remember me"
-                                  FontSize="13"
-                                  Foreground="#555555"
-                                  Margin="0,5,0,18"/>
+                        
 
 
                         <!-- API key actions -->
                         <WrapPanel>
-                            <Button Content="Save API key"
+                            <Button Content="Configure"
+                                    Click="Configure_Click"
                                     Padding="20,10"
                                     Background="#58785D"
                                     Foreground="White"
@@ -241,6 +259,7 @@
                                     Margin="0,0,10,0"/>
 
                             <Button Content="Remove API key"
+                                    Click="RemoveKey_Click"
                                     Padding="20,10"
                                     Background="#F8EEEE"
                                     Foreground="#A34B4B"

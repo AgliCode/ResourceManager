@@ -43,6 +43,7 @@ namespace ResourceManager.Views
             InitializeComponent();
             _projectContext = projectContext;
             _geminiKeyStorage = geminiKeyStorage;
+            
         }
 
         public async Task LoadTranslationsAsync()
@@ -103,7 +104,7 @@ namespace ResourceManager.Views
                             .ToList();
 
                         aiTranslations = await _translationApiClient.TranslateAsync(
-                            itemsToTranslate, _geminiKeyStorage.ApiKey!, _projectContext.TargetLanguage!);
+                            itemsToTranslate, _geminiKeyStorage.ReadApiKey()!, _projectContext.TargetLanguage!);
 
                         MessageBox.Show(
                             $"Otrzymano {aiTranslations.Count} propozycji tłumaczeń.",

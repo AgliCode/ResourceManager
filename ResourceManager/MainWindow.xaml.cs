@@ -25,31 +25,43 @@ namespace ResourceManager
         public GeminiKeyStorage GeminiKeyStorage { get; set; } = new();
         private string[] _resxFiles = Array.Empty<string>();
         private string resourcesDirectory {  get; set; } = string.Empty;
+        private TaskCompletionSource<bool>? _geminiConfigurationTask;
+
+        private ApiKeyStorageService _ApiKeyStorageService = new();
+        private bool isInitialSetup = true;
+
         public MainWindow()
         {
             InitializeComponent();
+            string? savedApiKey = _ApiKeyStorageService.Load();
+
+            if (!string.IsNullOrWhiteSpace(savedApiKey))
+            {
+                GeminiKeyStorage.SaveApiKeyLocally = true;
+                OpenFolderSelection();
+            }
+            else
+            {
+                GeminiOverlay.Visibility = Visibility.Visible;
+            }
         }
 
         private async void CompleteTranslations_Click(object sender, RoutedEventArgs e)
         {
             var view = new CompleteTranslationsView(ProjectContext, GeminiKeyStorage);
-
             MainContent.Content = view;
-
             await view.LoadTranslationsAsync();
         }
 
         private void AddEntry_Click(object sender, RoutedEventArgs e)
         {
             var view = new AddResourceView(ProjectContext, GeminiKeyStorage);
-
             MainContent.Content = view;
         }
 
         private async void Dashboard_Click(object sender, RoutedEventArgs e)
         {
             var view = new DashboardView(ProjectContext);
-
             MainContent.Content = view;
             await view.LoadStaticticAsync();
         }
@@ -57,7 +69,6 @@ namespace ResourceManager
         private async void AddNewLanguage_Click(object sender, RoutedEventArgs e)
         {
             var view = new AddNewLanguageView(ProjectContext, GeminiKeyStorage);
-
             MainContent.Content = view;
         }
         private async void BrowseResources_Click(object sender, RoutedEventArgs e)
@@ -112,6 +123,7 @@ namespace ResourceManager
         private void AddApiKey_Click(object sender, RoutedEventArgs e)
         {
             string apiKey = ApiKeyPasswordBox.Password;
+            bool saveApiKeyLocally = RememberMeCheckBox.IsChecked == true;
 
             if (string.IsNullOrWhiteSpace(apiKey))
             {
@@ -124,18 +136,44 @@ namespace ResourceManager
                 return;
             }
 
-            GeminiKeyStorage.Set(apiKey);
-            OpenFolderSelection();
+            if (saveApiKeyLocally)
+            {
+                _ApiKeyStorageService.Save(apiKey);
+                GeminiKeyStorage.ClearApiKeyFromMemory();
+                GeminiKeyStorage.SaveApiKeyLocally = true;
+            }
+            else
+            {
+                _ApiKeyStorageService.Delete();
+                GeminiKeyStorage.Set(apiKey, false);
+            }
+            if (isInitialSetup)OpenFolderSelection();
+            else GeminiOverlay.Visibility = Visibility.Collapsed;
+            _geminiConfigurationTask?.TrySetResult(true);
+            _geminiConfigurationTask = null;
+
         }
         private void CancelApiKey_Click(object sender, RoutedEventArgs e)
         {
-            OpenFolderSelection();
+            if (isInitialSetup)
+            {
+                OpenFolderSelection();
+            }
+            else
+            {
+                GeminiOverlay.Visibility = Visibility.Collapsed;
+            }
+
+            _geminiConfigurationTask?.TrySetResult(false);
+            _geminiConfigurationTask = null;
         }
         private void OpenFolderSelection()
         {
             GeminiOverlay.Visibility = Visibility.Collapsed;
             FolderOverlay.Visibility = Visibility.Visible;
         }
+
+     
 
         private async void ContinueConfigurationFiles_Click(object sender, RoutedEventArgs e)
         {
@@ -173,6 +211,14 @@ namespace ResourceManager
             SettingsNavButton.IsChecked = false;
             DashboardNavButton.IsChecked = true;
 
+        }
+
+        public Task ShowGeminiKeyConfiguration()
+        {
+            isInitialSetup = false;
+            _geminiConfigurationTask = new TaskCompletionSource<bool>();
+            GeminiOverlay.Visibility = Visibility.Visible;
+            return _geminiConfigurationTask.Task;
         }
 
     }
