@@ -27,7 +27,6 @@
         <!-- Configuration -->
         <Border Grid.Row="1"
                 x:Name="ConfigurationPanel"
-                Background="#F5F7F5"
                 CornerRadius="8"
                 Padding="25"
                 Margin="0,30,0,0"
@@ -45,7 +44,7 @@
                 <!-- Base file -->
                 <TextBlock Text="Base file"
                            FontWeight="SemiBold"
-                           Foreground="#51443B"
+                           Foreground="#555555"
                            Margin="0,0,0,8"/>
 
                 <TextBox Text="Resources.resx"
@@ -61,7 +60,7 @@
                 <!-- Target language -->
                 <TextBlock Text="Target language"
                            FontWeight="SemiBold"
-                           Foreground="#51443B"
+                           Foreground="#555555"
                            Margin="0,0,0,8"/>
 
                 <ComboBox x:Name="TargetLanguageComboBox"
@@ -83,7 +82,7 @@
                 <!-- Output file name -->
                 <TextBlock Text="Output file name"
                            FontWeight="SemiBold"
-                           Foreground="#51443B"
+                           Foreground="#555555"
                            Margin="0,0,0,8"/>
 
                 <DockPanel LastChildFill="True"
@@ -115,14 +114,7 @@
                         BorderThickness="0"
                         FontSize="14"
                         FontWeight="SemiBold"
-                        Cursor="Hand" Click="Button_Click">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="6"/>
-                        </Style>
-                    </Button.Resources>
-
-                </Button>
+                        Cursor="Hand" Click="Button_Click"/>
 
             </StackPanel>
         </Border>

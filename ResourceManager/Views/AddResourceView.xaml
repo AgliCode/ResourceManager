@@ -10,29 +10,22 @@
         <Grid Margin="25">
             <Border Background="#FFFFFF"
                     BorderBrush="#E5E5E5"
-                    BorderThickness="1"
-                    CornerRadius="16"
                     Padding="25">
 
                 <StackPanel>
 
                     <!-- Header -->
-                    <Grid Margin="0,0,0,22">
-                        <TextBlock Text="New Resource"
-                                   FontSize="20"
-                                   FontWeight="SemiBold"
-                                   Foreground="#26352F"
-                                   VerticalAlignment="Center"/>
+                    <StackPanel Grid.Row="0">
+                        <TextBlock Text="Add new resource"
+                           FontSize="26"
+                           FontWeight="SemiBold"
+                           Foreground="#26352F"/>
 
-                        <Border Background="#D9F4E4"
-                                CornerRadius="12"
-                                Padding="10,4"
-                                HorizontalAlignment="Right">
-                            <TextBlock Text="Adding"
-                                       Foreground="#168348"
-                                       FontSize="13"/>
-                        </Border>
-                    </Grid>
+                        <TextBlock Text="Add a new resource key to both the base and target resource files."
+                           FontSize="14"
+                           Foreground="#777777"
+                           Margin="0,6,0,10"/>
+                    </StackPanel>
 
                     <!-- Key name -->
                     <TextBlock Text="Key name"
@@ -51,7 +44,7 @@
                              Margin="0,0,0,18"/>
 
                     <!-- Neutral value -->
-                    <TextBlock Text="Neutral value"
+                    <TextBlock Text="Value"
                                FontSize="15"
                                Foreground="#555555"
                                Margin="0,0,0,7"/>
@@ -67,13 +60,13 @@
                              Margin="0,0,0,18"/>
 
                     <!-- Neutral comment -->
-                    <TextBlock Text="Neutral comment"
+                    <TextBlock Text="Comment"
                                FontSize="15"
                                Foreground="#555555"
                                Margin="0,0,0,7"/>
 
                     <TextBox x:Name="NeutralCommentTextBox"
-                             Height="75"
+                             Height="60"
                              FontSize="17"
                              Padding="15,10"
                              BorderBrush="#E5E5E5"
@@ -124,22 +117,15 @@
                                 x:Name="SuggestTranslationButton"
                                 Click="SuggestTranslationButton_Click"
                                 Content="Suggest translation"
-                                Height="75"
-                                FontSize="14"
                                 Background="Transparent"
-                                Foreground="#26352F"
-                                BorderThickness="0"/>
+                                Foreground="#26352F"/>
 
                         <Button Grid.Column="2"
                                 x:Name="AddEntryButton"
-                                 Click="AddEntryButton_Click"
+                                Click="AddEntryButton_Click"
                                 Content="Add entry"
-                                Height="75"
-                                FontSize="15"
                                 Background="#365744"
-                                Foreground="White"
-                                BorderThickness="0"
-                                FontWeight="SemiBold"/>
+                                Foreground="White"/>
                     </Grid>
 
                 </StackPanel>

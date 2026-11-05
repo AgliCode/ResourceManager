@@ -91,7 +91,7 @@ public class TranslationService
 
         // Send request to Gemini
         string url =
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent";
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, url);
 

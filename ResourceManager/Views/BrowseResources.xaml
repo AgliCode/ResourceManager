@@ -29,7 +29,6 @@
 
             <!-- File selection -->
             <Border Grid.Row="1"
-                    Background="#F5F7F5"
                     CornerRadius="8"
                     Padding="25"
                     Margin="0,30,0,25"
@@ -79,7 +78,6 @@
 
             <!-- Resources table placeholder -->
             <Border Grid.Row="2"
-                    Background="#F5F7F5"
                     CornerRadius="8"
                     Padding="20">
 
