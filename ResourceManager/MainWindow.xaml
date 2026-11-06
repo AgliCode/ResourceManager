@@ -349,6 +349,15 @@
                          FontSize="14"
                          Margin="0,0,0,12"/>
 
+                    <TextBlock Margin="0,0,0,15"
+                           HorizontalAlignment="Right">
+                    <Hyperlink Click="GeminiApiKeyGuide_Click"
+                               Foreground="#C8DDCE"
+                               TextDecorations="Underline">
+                        Where can I get a Gemini API key?
+                    </Hyperlink>
+                                    </TextBlock>
+
                     <CheckBox x:Name="RememberMeCheckBox"
                       Content="Remember me"
                       Foreground="White"

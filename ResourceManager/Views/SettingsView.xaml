@@ -127,6 +127,15 @@
                             <ComboBoxItem Content="Ukrainian - uk-UA" Tag="uk-UA"/>
                         </ComboBox>
 
+                        <Button Content="Save changes"
+                        Click="SaveChanges_Click"
+                        Padding="20,10"
+                        Background="#58785D"
+                        Foreground="White"
+                        BorderThickness="0"
+                        FontWeight="SemiBold"
+                        Margin="0,0,10,0"/>
+
                     </StackPanel>
                 </Border>
 
@@ -271,35 +280,7 @@
                 </Border>
 
 
-                <!-- PROJECT ACTIONS -->
-                <Border Background="#F5F7F5"
-                        CornerRadius="8"
-                        Padding="18"
-                        Margin="0,0,0,20">
-
-                    <StackPanel>
-
-                        <TextBlock Text="Project Actions"
-                                   FontSize="16"
-                                   FontWeight="SemiBold"
-                                   Foreground="#26352F"
-                                   Margin="0,0,0,5"/>
-
-                        <TextBlock Text="Return to the initial project configuration."
-                                   FontSize="12"
-                                   Foreground="#777777"
-                                   Margin="0,0,0,15"/>
-
-                        <Button Content="Change project folder"
-                                HorizontalAlignment="Left"
-                                Padding="20,10"
-                                Background="#E8F0E9"
-                                Foreground="#42634A"
-                                BorderThickness="0"
-                                FontWeight="SemiBold"/>
-
-                    </StackPanel>
-                </Border>
+                
 
             </StackPanel>
         </Grid>

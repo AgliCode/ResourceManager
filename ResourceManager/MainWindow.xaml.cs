@@ -173,7 +173,18 @@ namespace ResourceManager
             FolderOverlay.Visibility = Visibility.Visible;
         }
 
-     
+        private void GeminiApiKeyGuide_Click(object sender, RoutedEventArgs e)
+        {
+            var guideWindow = new GeminiApiKeyGuideWindow
+            {
+                Owner = this
+            };
+
+            guideWindow.ShowDialog();
+        }
+
+
+
 
         private async void ContinueConfigurationFiles_Click(object sender, RoutedEventArgs e)
         {

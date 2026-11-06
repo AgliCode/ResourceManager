@@ -94,5 +94,24 @@ namespace ResourceManager.Views
             await _mainWindow.ShowGeminiKeyConfiguration();
             UpdateApiKeyStatus();
         }
+
+        private void SaveChanges_Click(object sender, RoutedEventArgs e)
+        {
+            string? baseFileName = BaseFileComboBox.SelectedItem as string;
+            string? targetFileName = TargetFileComboBox.SelectedItem as string;
+            string? targetLanguage = (TargetLanguageComboBox.SelectedItem as ComboBoxItem)?.Tag?.ToString();
+            string[] _resxFiles = _projectContext.ResxFiles;
+            string resourcesDirectory = _projectContext.ProjectDirectory;
+            string baseFilePath = System.IO.Path.Combine(
+                System.IO.Path.GetDirectoryName(_resxFiles[0])!,
+                baseFileName);
+
+            string targetFilePath = System.IO.Path.Combine(
+                System.IO.Path.GetDirectoryName(_resxFiles[0])!,
+                targetFileName);
+
+
+            _projectContext.SetProject(resourcesDirectory, baseFilePath, targetFilePath, targetLanguage, _resxFiles);
+        }
     }
 }

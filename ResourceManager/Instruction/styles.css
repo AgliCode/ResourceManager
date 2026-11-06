@@ -1,0 +1,114 @@
+* {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 20px;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #F5F7F5;
+            color: #26352F;
+        }
+
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+            font-size: 28px;
+            color: #1D3025;
+        }
+
+        .subtitle {
+            margin-bottom: 28px;
+            color: #777;
+            line-height: 1.6;
+        }
+
+        .step {
+            display: flex;
+            gap: 18px;
+            padding: 20px;
+            margin-bottom: 14px;
+            background: #FFFFFF;
+            border: 1px solid #E5EAE6;
+            border-radius: 12px;
+        }
+
+        .step-number {
+            flex-shrink: 0;
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #E8F0E9;
+            color: #1D3025;
+            font-weight: 700;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        h2 {
+            margin: 3px 0 8px;
+            font-size: 17px;
+            color: #26352F;
+        }
+
+        .step p {
+            margin: 0;
+            color: #666;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        a {
+            color: #39704D;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .warning {
+            margin-top: 24px;
+            padding: 18px 20px;
+            background: #FFF8E8;
+            border: 1px solid #F0E2BD;
+            border-radius: 12px;
+        }
+
+        .warning h2 {
+            color: #80601D;
+            margin-top: 0;
+        }
+
+        .warning p {
+            margin: 0;
+            color: #755F35;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .footer {
+            margin-top: 25px;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+        }
+
+        .step-image {
+    width: 100%;
+    max-width: 600px;
+    margin-top: 16px;
+    border: 1px solid #E5EAE6;
+    border-radius: 8px;
+    display: block;
+}

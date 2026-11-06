@@ -16,6 +16,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using static ResourceManager.Services.TranslationApiClient;
+using static System.Net.WebRequestMethods;
 
 
 namespace ResourceManager.Views
@@ -33,6 +34,7 @@ namespace ResourceManager.Views
         private readonly ResxWriter _resxWriter = new();
         private readonly ProjectContext _projectContext;
         private readonly GeminiKeyStorage _geminiKeyStorage;
+        const int batchSize = 300;
 
 
 
@@ -103,12 +105,30 @@ namespace ResourceManager.Views
                             })
                             .ToList();
 
-                        aiTranslations = await _translationApiClient.TranslateAsync(
-                            itemsToTranslate, _geminiKeyStorage.ReadApiKey()!, _projectContext.TargetLanguage!);
+
+                    for (int i = 0; i < itemsToTranslate.Count; i += batchSize)
+                    {
+                        var batch = itemsToTranslate
+                            .Skip(i)
+                            .Take(batchSize)
+                            .ToList();
+
+                        var batchTranslations = await _translationApiClient.TranslateAsync(
+                                batch,
+                                _geminiKeyStorage.ReadApiKey()!,
+                                _projectContext.TargetLanguage!);
+
+                        foreach (var translation in batchTranslations)
+                        {
+                            aiTranslations[translation.Key] = translation.Value;
+                        }
+                        await Task.Delay(TimeSpan.FromSeconds(5));
+                    }
+                    
 
                         MessageBox.Show(
-                            $"Otrzymano {aiTranslations.Count} propozycji tłumaczeń.",
-                            "Tłumaczenie AI",
+                            $"Received  {aiTranslations.Count} translation suggestions.",
+                            "AI Translation",
                             MessageBoxButton.OK,
                             MessageBoxImage.Information);
 
@@ -116,8 +136,8 @@ namespace ResourceManager.Views
                     catch (Exception ex)
                     {
                         MessageBox.Show(
-                            $"Nie udało się pobrać tłumaczeń AI:\n{ex.Message}",
-                            "Błąd AI",
+                            $"Failed to retrieve AI translations:\n{ ex.Message}",
+                            "AI Error",
                             MessageBoxButton.OK,
                             MessageBoxImage.Error);
                     }
