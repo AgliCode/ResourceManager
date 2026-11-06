@@ -34,6 +34,7 @@ namespace ResourceManager
         public MainWindow()
         {
             InitializeComponent();
+            
             string? savedApiKey = _ApiKeyStorageService.Load();
             LoadLanguages();
 
@@ -46,6 +47,15 @@ namespace ResourceManager
             {
                 GeminiOverlay.Visibility = Visibility.Visible;
             }
+        }
+
+        public void UpdateCompleteTranslationsButtonStyle()
+        {
+            CompleteTranslationsButton.Style = (Style)CompleteTranslationsButton.FindResource(
+                ProjectContext.HasSeparateTargetFile
+                    ? "ModernMenuButtonStyle"
+                    : "DisabledMenuButtonStyle"
+            );
         }
 
         private async void CompleteTranslations_Click(object sender, RoutedEventArgs e)
@@ -230,6 +240,7 @@ namespace ResourceManager
 
             ProjectContext.SetProject(resourcesDirectory, baseFilePath, targetFilePath, targetLanguage, _resxFiles);
             ResxSelectionOverlay.Visibility = Visibility.Collapsed;
+            UpdateCompleteTranslationsButtonStyle();
             var view = new DashboardView(ProjectContext);
 
             MainContent.Content = view;

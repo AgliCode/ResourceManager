@@ -33,6 +33,18 @@ namespace ResourceManager.Views
         {
             InitializeComponent();
             _projectContext = projectContext;
+            UpdateCompletePanelsVisible();
+        }
+
+        public void UpdateCompletePanelsVisible()
+        {
+            TranslatedPanel.Visibility = _projectContext.HasSeparateTargetFile
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            MissingPanel.Visibility = _projectContext.HasSeparateTargetFile
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+
         }
 
         public async Task LoadStaticticAsync()

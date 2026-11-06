@@ -33,9 +33,21 @@ namespace ResourceManager.Views
             InitializeComponent();
             _projectContext = projectContext;
             _geminiKeyStorage = geminiKeyStorage;
-
+            UpdateTargetPanelVisible();
             TargetValueLabel.Text =
                 $"Target value ({_projectContext.TargetLanguage})";
+        }
+        public void UpdateTargetPanelVisible()
+        {
+            TargetValuePanel.Visibility = _projectContext.HasSeparateTargetFile
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            TargetValueTextBox.Visibility = _projectContext.HasSeparateTargetFile
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            SuggestTranslationButton.Visibility = _projectContext.HasSeparateTargetFile
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
         }
 
         private async void SuggestTranslationButton_Click(object sender, RoutedEventArgs e)
@@ -43,6 +55,8 @@ namespace ResourceManager.Views
             string neutralValue = NeutralValueTextBox.Text.Trim();
             string keyName = KeyNameTextBox.Text.Trim();
             string? comment = NeutralCommentTextBox.Text.Trim();
+
+
             try
             {
                 var items = new List<TranslationApiItem>
@@ -94,10 +108,12 @@ namespace ResourceManager.Views
             string? comment = NeutralCommentTextBox.Text.Trim();
             string translatedValue = TargetValueTextBox.Text.Trim();
 
+            bool hasSeparateTargetFile = _projectContext.HasSeparateTargetFile;
+
             // Validate required fields.
             if (string.IsNullOrWhiteSpace(key) ||
                 string.IsNullOrWhiteSpace(neutralValue) ||
-                string.IsNullOrWhiteSpace(translatedValue))
+                (hasSeparateTargetFile &&  string.IsNullOrWhiteSpace(translatedValue)))
             {
                 MessageBox.Show(
                     "Please fill in the key name, neutral value and target value.",
@@ -114,9 +130,11 @@ namespace ResourceManager.Views
                     key,
                     neutralValue,
                     comment,
-                    translatedValue,
+                    _projectContext.HasSeparateTargetFile ? translatedValue : null,
                     _projectContext.BaseFilePath,
-                    _projectContext.TargetFilePath);
+                    _projectContext.HasSeparateTargetFile
+                        ? _projectContext.TargetFilePath
+                        : null);
 
                 MessageBox.Show(
                     "The resource entry has been successfully added to both files.",

@@ -86,35 +86,51 @@ namespace ResourceManager.Services
             string key,
             string neutralValue,
             string? comment,
-            string translatedValue,
+            string? translatedValue,
             string? baseFilePath,
             string? targetFilePath)
         {
-            if (string.IsNullOrWhiteSpace(baseFilePath) ||
-                string.IsNullOrWhiteSpace(targetFilePath))
+            if (string.IsNullOrWhiteSpace(baseFilePath))
             {
                 throw new InvalidOperationException(
-                    "Resource file paths have not been configured.");
+                    "Base resource file path has not been configured.");
+            }
+
+            bool hasSeparateTargetFile = !string.IsNullOrWhiteSpace(targetFilePath);
+
+            if (hasSeparateTargetFile && string.IsNullOrWhiteSpace(translatedValue))
+            {
+                throw new InvalidOperationException(
+                    "Target value cannot be empty.");
             }
 
             var baseDocument = System.Xml.Linq.XDocument.Load(baseFilePath);
-            var targetDocument = System.Xml.Linq.XDocument.Load(targetFilePath);
 
             var baseRoot = baseDocument.Root
                 ?? throw new InvalidOperationException("Invalid base RESX file.");
 
-            var targetRoot = targetDocument.Root
-                ?? throw new InvalidOperationException("Invalid target RESX file.");
+            System.Xml.Linq.XDocument? targetDocument = null;
+            System.Xml.Linq.XElement? targetRoot = null;
+
+            if (hasSeparateTargetFile)
+            {
+                targetDocument = System.Xml.Linq.XDocument.Load(targetFilePath!);
+
+                targetRoot = targetDocument.Root
+                    ?? throw new InvalidOperationException("Invalid target RESX file.");
+            }
 
             // Check whether the key already exists in either file.
-            bool keyExists =
-                baseRoot.Elements().Any(element =>
-                    element.Name.LocalName == "data" &&
-                    (string?)element.Attribute("name") == key)
-                ||
-                targetRoot.Elements().Any(element =>
+            bool keyExists = baseRoot.Elements().Any(element =>
+                element.Name.LocalName == "data" &&
+                (string?)element.Attribute("name") == key);
+
+            if (targetRoot != null)
+            {
+                keyExists |= targetRoot.Elements().Any(element =>
                     element.Name.LocalName == "data" &&
                     (string?)element.Attribute("name") == key);
+            }
 
             if (keyExists)
             {
@@ -129,15 +145,19 @@ namespace ResourceManager.Services
                 neutralValue,
                 comment));
 
-            // Add entry to the target file.
-            targetRoot.Add(CreateDataElement(
-                targetRoot,
-                key,
-                translatedValue,
-                comment));
+            // Add entry to the target file only if it exists.
+            if (targetRoot != null)
+            {
+                targetRoot.Add(CreateDataElement(
+                    targetRoot,
+                    key,
+                    translatedValue!,
+                    comment));
+            }
 
             baseDocument.Save(baseFilePath);
-            targetDocument.Save(targetFilePath);
+
+            targetDocument?.Save(targetFilePath!);
         }
 
         private System.Xml.Linq.XElement CreateDataElement(

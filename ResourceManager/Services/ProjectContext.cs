@@ -14,6 +14,11 @@ public class ProjectContext
     public bool IsProjectLoaded =>
         !string.IsNullOrWhiteSpace(ProjectDirectory);
 
+    public bool HasSeparateTargetFile =>
+    !string.Equals(
+        BaseFilePath,
+        TargetFilePath,
+        StringComparison.OrdinalIgnoreCase);
     public void SetProject(string directory, string baseFilePath, string targetFilePath, string targetLanguage, string[] resxFiles)
     {
         ProjectDirectory = directory;
@@ -25,6 +30,7 @@ public class ProjectContext
         TargetLanguage = targetLanguage;
 
         ResxFiles = resxFiles;
+
     }
 
     

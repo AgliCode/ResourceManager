@@ -133,6 +133,7 @@ namespace ResourceManager.Views
 
 
             _projectContext.SetProject(resourcesDirectory, baseFilePath, targetFilePath, targetLanguage, _resxFiles);
+            _mainWindow.UpdateCompleteTranslationsButtonStyle();
         }
     }
 }

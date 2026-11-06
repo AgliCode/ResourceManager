@@ -61,7 +61,7 @@
         </Grid.ColumnDefinitions>
 
         <!-- Boczne menu -->
-        <StackPanel Grid.Column="0" Background="#1D3025" Width="240">
+        <StackPanel Grid.Column="0" Background="#1D3025" Width="280">
             <StackPanel.Resources>
                 <!-- Wspólny styl dla nowoczesnych przycisków menu (wzorowany na obrazku) -->
                 <FontFamily x:Key="MaterialSymbols">/ResourceManager;component/Fonts/#Material Symbols Rounded</FontFamily>
@@ -118,6 +118,25 @@
                         </Setter.Value>
                     </Setter>
                 </Style>
+                <Style x:Key="DisabledMenuButtonStyle"
+                   TargetType="RadioButton"
+                   BasedOn="{StaticResource ModernMenuButtonStyle}">
+
+                    <Setter Property="Foreground" Value="#68766B"/>
+                    <Setter Property="IsEnabled" Value="False"/>
+                    <Setter Property="Opacity" Value="0.65"/>
+                    
+                    <Style.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="ToolTip"
+                            Value="To use this feature, the Base file and Target file must be different."/>
+                            <Setter Property="ToolTipService.ShowOnDisabled"
+                            Value="True"/>
+                        </Trigger>
+                    </Style.Triggers>
+
+
+                </Style>
 
             </StackPanel.Resources>
 
@@ -142,9 +161,10 @@
 
             <RadioButton Content="Complete Translations" 
                  Style="{StaticResource ModernMenuButtonStyle}" 
+                 x:Name="CompleteTranslationsButton"
                  Tag="&#xe8e2;"
                  Click="CompleteTranslations_Click"/>
-
+            
             <RadioButton Content="Add new language" 
                  Style="{StaticResource ModernMenuButtonStyle}" 
                  Tag="&#xe894;"
@@ -264,28 +284,47 @@
 
                     <ComboBox x:Name="TargetFileComboBox" Margin="0,0,0,7"/>
 
+                    <Border Background="#34463D"
+                    CornerRadius="8"
+                    Padding="12"
+                    Margin="0,5,0,18">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="ⓘ"
+                           Grid.Column="0"
+                           Foreground="#C8DFC9"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           Margin="0,0,10,0"
+                           VerticalAlignment="Top"/>
+
+                            <TextBlock Grid.Column="1"
+                           Text="To work with a single RESX file, select the same file for both Base and Target."
+                           Foreground="#D0D8D3"
+                           FontSize="12"
+                           TextWrapping="Wrap"
+                           VerticalAlignment="Center"/>
+                        </Grid>
+
+                    </Border>
+
+
                     <TextBlock Text="Target language"
                        Foreground="White"
                        Margin="0,0,0,7"/>
 
                     <ComboBox x:Name="TargetLanguageComboBox" Margin="0,0,0,7"/>
+                    
+                    <Button Content="Continue" Grid.Column="0"
+                       Click="ContinueConfigurationFiles_Click"
+                       FontSize="14" Margin="10"/>
 
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="12"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        
-                        <Button Content="Continue" Grid.Column="0"
-                        Click="ContinueConfigurationFiles_Click"
-                        FontSize="14" Margin="10"/>
-
-                        <Button Content="Add new language" Grid.Column="2"
-                        FontSize="14" Margin="10"/>
-                        
-                    </Grid>
+                    
 
 
                     
