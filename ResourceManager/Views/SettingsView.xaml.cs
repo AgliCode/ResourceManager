@@ -43,13 +43,14 @@ namespace ResourceManager.Views
                 .ToList();
             TargetFileComboBox.SelectedIndex = _projectContext.ResxFiles.ToList().FindIndex(path => path == _projectContext.TargetFilePath);
 
+            LoadLanguages();
+
             TargetLanguageComboBox.SelectedIndex = TargetLanguageComboBox.Items
                 .Cast<ComboBoxItem>()
                 .ToList()
                 .FindIndex(item => item.Tag?.ToString() == _projectContext.TargetLanguage);
 
             UpdateApiKeyStatus();
-            LoadLanguages();
 
 
             ProjectFolderTextBox.Text = _projectContext.ProjectDirectory;

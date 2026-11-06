@@ -47,15 +47,16 @@
                            Foreground="#555555"
                            Margin="0,0,0,8"/>
 
-                <TextBox Text="Resources.resx"
-                         IsReadOnly="True"
-                         Padding="10"
-                         FontSize="14"
-                         Background="#EEEEEE"
-                         Foreground="#666666"
-                         BorderBrush="#E5E5E5"
-                         BorderThickness="1"
-                         Margin="0,0,0,20"/>
+               
+                <ComboBox x:Name="BaseFileComboBox"
+                      Height="38"
+                      Padding="10,6"
+                      FontSize="14"
+                      Background="#EEEEEE"
+                      Foreground="#666666"
+                      BorderBrush="#E5E5E5"
+                      BorderThickness="1"
+                      Margin="0,0,0,20"/>
 
                 <!-- Target language -->
                 <TextBlock Text="Target language"

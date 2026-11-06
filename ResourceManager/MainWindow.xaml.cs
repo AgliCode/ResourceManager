@@ -160,7 +160,7 @@ namespace ResourceManager
             if (saveApiKeyLocally)
             {
                 _ApiKeyStorageService.Save(apiKey);
-                GeminiKeyStorage.ClearApiKeyFromMemory();
+                GeminiKeyStorage.Set(string.Empty, true);
                 GeminiKeyStorage.SaveApiKeyLocally = true;
             }
             else
@@ -248,6 +248,8 @@ namespace ResourceManager
         public Task ShowGeminiKeyConfiguration()
         {
             isInitialSetup = false;
+            ApiKeyPasswordBox.Clear();
+            RememberMeCheckBox.IsChecked = GeminiKeyStorage.SaveApiKeyLocally;
             _geminiConfigurationTask = new TaskCompletionSource<bool>();
             GeminiOverlay.Visibility = Visibility.Visible;
             return _geminiConfigurationTask.Task;

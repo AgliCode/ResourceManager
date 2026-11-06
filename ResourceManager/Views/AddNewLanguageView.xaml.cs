@@ -42,6 +42,11 @@ namespace ResourceManager.Views
             TargetLanguageComboBox.SelectionChanged += TargetLanguageComboBox_SelectionChanged;
             LoadLanguages();
 
+            BaseFileComboBox.ItemsSource = _projectContext.ResxFiles
+                .Select(System.IO.Path.GetFileName)
+                .ToList();
+            BaseFileComboBox.SelectedIndex = _projectContext.ResxFiles.ToList().FindIndex(path => path == _projectContext.BaseFilePath);
+
         }
 
         private void LoadLanguages()
@@ -225,8 +230,8 @@ namespace ResourceManager.Views
 
                     var batchTranslations = await _translationApiClient.TranslateAsync(
                         batch,
-                        languageCode,
-                        _geminiKeyStorage.ReadApiKey()!);
+                        _geminiKeyStorage.ReadApiKey()!,
+                        languageCode);
 
                     foreach (var translation in batchTranslations)
                     {
