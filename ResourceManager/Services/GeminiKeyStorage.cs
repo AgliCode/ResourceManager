@@ -30,6 +30,7 @@ namespace ResourceManager.TranslationApi.Services
         public void DeleteSavedApiKey()
         {
             _apiKeyStorageService.Delete();
+            SaveApiKeyLocally = false;
         }
 
         public string? ReadApiKey()

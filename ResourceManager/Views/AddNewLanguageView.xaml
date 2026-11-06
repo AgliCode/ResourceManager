@@ -70,14 +70,7 @@
                           BorderBrush="#D9E0DB"
                           BorderThickness="1"
                           SelectedIndex="0"
-                          Margin="0,0,0,20">
-                    <ComboBoxItem Content="English (United States) - en-US"/>
-                    <ComboBoxItem Content="German - de-DE"/>
-                    <ComboBoxItem Content="French - fr-FR"/>
-                    <ComboBoxItem Content="Spanish - es-ES"/>
-                    <ComboBoxItem Content="Italian - it-IT"/>
-                    <ComboBoxItem Content="Japanese - ja-JP"/>
-                </ComboBox>
+                          Margin="0,0,0,20"/>
 
                 <!-- Output file name -->
                 <TextBlock Text="Output file name"

@@ -27,6 +27,8 @@ namespace ResourceManager.Views
         private readonly ResourceReader _resourceReader = new();
         private List<NewLanguageEntry> entries = new();
         private readonly TranslationApiClient _translationApiClient = new();
+
+        private readonly LanguageService _languageService = new();
         private string? _outputFilePath;
         private readonly ResxWriter _resxWriter = new();
         const int batchSize = 300;
@@ -38,7 +40,26 @@ namespace ResourceManager.Views
             _projectContext = projectContext;
             _geminiKeyStorage = geminiKeyStorage;
             TargetLanguageComboBox.SelectionChanged += TargetLanguageComboBox_SelectionChanged;
+            LoadLanguages();
 
+        }
+
+        private void LoadLanguages()
+        {
+            TargetLanguageComboBox.Items.Clear();
+
+            var languages = _languageService.GetAvailableLanguages();
+
+            foreach (var language in languages)
+            {
+                TargetLanguageComboBox.Items.Add(new ComboBoxItem
+                {
+                    Content = $"{language.EnglishName} - {language.Name}",
+                    Tag = language.Name
+                });
+            }
+
+            TargetLanguageComboBox.SelectedValuePath = "Tag";
         }
         private void TargetLanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

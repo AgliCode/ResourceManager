@@ -116,16 +116,7 @@
                                   Height="38"
                                   Padding="10,5"
                                   FontSize="13"
-                                  Background="#FFFFFF">
-                            <ComboBoxItem Content="English (United States) - en-US" Tag="en-US"/>
-                            <ComboBoxItem Content="English (United Kingdom) - en-GB" Tag="en-GB"/>
-                            <ComboBoxItem Content="Polish - pl-PL" Tag="pl-PL"/>
-                            <ComboBoxItem Content="German - de-DE" Tag="de-DE"/>
-                            <ComboBoxItem Content="French - fr-FR" Tag="fr-FR"/>
-                            <ComboBoxItem Content="Spanish - es-ES" Tag="es-ES"/>
-                            <ComboBoxItem Content="Italian - it-IT" Tag="it-IT"/>
-                            <ComboBoxItem Content="Ukrainian - uk-UA" Tag="uk-UA"/>
-                        </ComboBox>
+                                  Background="#FFFFFF"/>
 
                         <Button Content="Save changes"
                         Click="SaveChanges_Click"

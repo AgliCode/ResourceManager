@@ -25,6 +25,7 @@ namespace ResourceManager.Views
         private readonly ProjectContext _projectContext;
         private readonly GeminiKeyStorage _geminiKeyStorage;
         private readonly MainWindow _mainWindow;
+        private readonly LanguageService _languageService = new();
         public SettingsView(ProjectContext projectContext,GeminiKeyStorage geminiKeyStorage, MainWindow mainWindow)
         {
             InitializeComponent();
@@ -48,11 +49,30 @@ namespace ResourceManager.Views
                 .FindIndex(item => item.Tag?.ToString() == _projectContext.TargetLanguage);
 
             UpdateApiKeyStatus();
+            LoadLanguages();
 
 
             ProjectFolderTextBox.Text = _projectContext.ProjectDirectory;
             _mainWindow = mainWindow;
         }
+        private void LoadLanguages()
+        {
+            TargetLanguageComboBox.Items.Clear();
+
+            var languages = _languageService.GetAvailableLanguages();
+
+            foreach (var language in languages)
+            {
+                TargetLanguageComboBox.Items.Add(new ComboBoxItem
+                {
+                    Content = $"{language.EnglishName} - {language.Name}",
+                    Tag = language.Name
+                });
+            }
+
+            TargetLanguageComboBox.SelectedValuePath = "Tag";
+        }
+
         private void UpdateApiKeyStatus()
         {
             if (string.IsNullOrWhiteSpace(_geminiKeyStorage.ReadApiKey()))

@@ -23,6 +23,7 @@ namespace ResourceManager
     {
         public ProjectContext ProjectContext { get; } = new();
         public GeminiKeyStorage GeminiKeyStorage { get; set; } = new();
+        private readonly LanguageService _languageService = new();
         private string[] _resxFiles = Array.Empty<string>();
         private string resourcesDirectory {  get; set; } = string.Empty;
         private TaskCompletionSource<bool>? _geminiConfigurationTask;
@@ -34,6 +35,7 @@ namespace ResourceManager
         {
             InitializeComponent();
             string? savedApiKey = _ApiKeyStorageService.Load();
+            LoadLanguages();
 
             if (!string.IsNullOrWhiteSpace(savedApiKey))
             {
@@ -118,6 +120,25 @@ namespace ResourceManager
 
             BaseFileComboBox.SelectedIndex = 0;
             TargetFileComboBox.SelectedIndex = _resxFiles.Length > 1 ? 1 : -1;
+        }
+
+
+        private void LoadLanguages()
+        {
+            TargetLanguageComboBox.Items.Clear();
+
+            var languages = _languageService.GetAvailableLanguages();
+
+            foreach (var language in languages)
+            {
+                TargetLanguageComboBox.Items.Add(new ComboBoxItem
+                {
+                    Content = $"{language.EnglishName} - {language.Name}",
+                    Tag = language.Name
+                });
+            }
+
+            TargetLanguageComboBox.SelectedValuePath = "Tag";
         }
 
         private void AddApiKey_Click(object sender, RoutedEventArgs e)
