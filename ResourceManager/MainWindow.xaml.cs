@@ -10,7 +10,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
-using ResourceManager.Services;
+using ResourceManager.Core.Services;
 using System.IO;
 using ResourceManager.TranslationApi.Services;
 
@@ -40,7 +40,6 @@ namespace ResourceManager
 
             if (!string.IsNullOrWhiteSpace(savedApiKey))
             {
-                GeminiKeyStorage.SaveApiKeyLocally = true;
                 OpenFolderSelection();
             }
             else
@@ -171,7 +170,6 @@ namespace ResourceManager
             {
                 _ApiKeyStorageService.Save(apiKey);
                 GeminiKeyStorage.Set(string.Empty, true);
-                GeminiKeyStorage.SaveApiKeyLocally = true;
             }
             else
             {

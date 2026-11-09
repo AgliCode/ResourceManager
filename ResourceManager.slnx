@@ -1,4 +1,6 @@
 <Solution>
+  <Project Path="ResourceManager.CLI/ResourceManager.CLI.csproj" Id="5274290e-9efa-40bd-948d-a42df7d07319" />
+  <Project Path="ResourceManager.Core/ResourceManager.Core.csproj" Id="c93d7a2d-5b2b-4840-a80e-b920daa4fd38" />
   <Project Path="ResourceManager.TranslationApi/ResourceManager.TranslationApi.csproj" Id="e3af49fe-8b4b-4b21-a075-f8bf62ee8228" />
   <Project Path="ResourceManager/ResourceManager.csproj" />
 </Solution>

@@ -18,6 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ResourceManager.Core\ResourceManager.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Fonts\MaterialSymbolsRounded-VariableFont_FILL,GRAD,opsz,wght.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

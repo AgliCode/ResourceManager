@@ -2,7 +2,7 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 
-namespace ResourceManager.Services;
+namespace ResourceManager.Core.Services;
 
 public class TranslationApiClient
 {

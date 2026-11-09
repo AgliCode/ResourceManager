@@ -1,4 +1,4 @@
-﻿using ResourceManager.Services;
+﻿using ResourceManager.Core.Services;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -7,7 +7,7 @@ namespace ResourceManager.TranslationApi.Services
     public class GeminiKeyStorage
     {
         public string? ApiKey { get; private set; }
-        public bool SaveApiKeyLocally { get; set; }
+        public bool SaveApiKeyLocally => _apiKeyStorageService.Exists();
 
         private ApiKeyStorageService _apiKeyStorageService = new();
 
@@ -19,7 +19,7 @@ namespace ResourceManager.TranslationApi.Services
             ApiKey = string.IsNullOrWhiteSpace(apiKey)
                 ? null
                 : apiKey.Trim();
-            SaveApiKeyLocally = saveApiKeyLocally;
+
         }
 
         public void ClearApiKeyFromMemory()
@@ -30,7 +30,7 @@ namespace ResourceManager.TranslationApi.Services
         public void DeleteSavedApiKey()
         {
             _apiKeyStorageService.Delete();
-            SaveApiKeyLocally = false;
+
         }
 
         public string? ReadApiKey()

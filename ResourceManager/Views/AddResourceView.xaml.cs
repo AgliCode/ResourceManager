@@ -1,4 +1,4 @@
-﻿using ResourceManager.Services;
+﻿using ResourceManager.Core.Services;
 using ResourceManager.TranslationApi.Services;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using static ResourceManager.Services.TranslationApiClient;
 
 namespace ResourceManager.Views
 {
@@ -59,7 +58,7 @@ namespace ResourceManager.Views
 
             try
             {
-                var items = new List<TranslationApiItem>
+                var items = new List<TranslationApiClient.TranslationApiItem>
                 {
                     new()
                     {

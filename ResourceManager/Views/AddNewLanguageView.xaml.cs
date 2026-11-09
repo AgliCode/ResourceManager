@@ -1,5 +1,5 @@
-﻿using ResourceManager.Models;
-using ResourceManager.Services;
+﻿using ResourceManager.Core.Models;
+using ResourceManager.Core.Services;
 using ResourceManager.TranslationApi.Services;
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using static ResourceManager.Services.TranslationApiClient;
 
 
 namespace ResourceManager.Views

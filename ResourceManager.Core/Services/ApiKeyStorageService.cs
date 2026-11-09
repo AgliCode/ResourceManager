@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace ResourceManager.Services;
+namespace ResourceManager.Core.Services;
 
 public class ApiKeyStorageService
 {
@@ -50,5 +50,9 @@ public class ApiKeyStorageService
     {
         if (File.Exists(_filePath))
             File.Delete(_filePath);
+    }
+    public bool Exists()
+    {
+        return File.Exists(_filePath);
     }
 }

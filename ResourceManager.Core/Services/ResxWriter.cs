@@ -1,4 +1,4 @@
-﻿using ResourceManager.Models;
+﻿using ResourceManager.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
 
-namespace ResourceManager.Services
+namespace ResourceManager.Core.Services
 {
-    internal class ResxWriter
+    public class ResxWriter
     {
         public void SaveTranslationToResx(Dictionary<string, string> translations, string? englishFilePath)
         {

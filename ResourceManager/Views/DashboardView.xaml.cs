@@ -1,5 +1,5 @@
-﻿using ResourceManager.Models;
-using ResourceManager.Services;
+﻿using ResourceManager.Core.Models;
+using ResourceManager.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;

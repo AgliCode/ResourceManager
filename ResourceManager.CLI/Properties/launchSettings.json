@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ResourceManager.CLI": {
+      "commandName": "Project",
+      "commandLineArgs": "help"
+    }
+  }
+}

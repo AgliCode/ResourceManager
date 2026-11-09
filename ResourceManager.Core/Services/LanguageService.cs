@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
 
-namespace ResourceManager.Services
+namespace ResourceManager.Core.Services
 {
     public class LanguageService
     {

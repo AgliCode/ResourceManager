@@ -1,4 +1,4 @@
-﻿using ResourceManager.Models;
+﻿using ResourceManager.Core.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-namespace ResourceManager.Services
+namespace ResourceManager.Core.Services
 {
     public class ResourceReader
     {

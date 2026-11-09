@@ -1,4 +1,4 @@
-﻿using ResourceManager.Services;
+﻿using ResourceManager.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;

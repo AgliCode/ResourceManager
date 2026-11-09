@@ -1,7 +1,6 @@
 ﻿using Microsoft.Win32;
-using ResourceManager.Enums;
-using ResourceManager.Models;
-using ResourceManager.Services;
+using ResourceManager.Core.Models;
+using ResourceManager.Core.Services;
 using ResourceManager.TranslationApi.Services;
 using System;
 using System.Collections.Generic;
@@ -15,7 +14,6 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using static ResourceManager.Services.TranslationApiClient;
 using static System.Net.WebRequestMethods;
 
 
@@ -97,7 +95,7 @@ namespace ResourceManager.Views
                     try
                     {
                         var itemsToTranslate = missingTranslations
-                            .Select(resource => new TranslationApiItem
+                            .Select(resource => new TranslationApiClient.TranslationApiItem
                             {
                                 Key = resource.Name,
                                 PolishText = resource.Value,
@@ -210,8 +208,6 @@ namespace ResourceManager.Views
             if (actual_id < 0 || actual_id >= missingTranslations.Count)
                 return;
 
-            missingTranslations[actual_id].Status = TranslationStatus.Current;
-
             DisplayCurrentEntry();
 
             IncompleteEntriesList.Items.Refresh();
@@ -222,7 +218,6 @@ namespace ResourceManager.Views
             string translation = EnglishValueTextBox.Text.Trim();
             var resource = missingTranslations[actual_id];
             approvedTranslations[resource.Name] = translation;
-            resource.Status = TranslationStatus.Approved;
             if (actual_id < missingTranslations.Count - 1)
             {
                 actual_id++;

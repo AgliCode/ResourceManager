@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ResourceManager.Models
+namespace ResourceManager.Core.Models
 {
     public class NewLanguageEntry
     {

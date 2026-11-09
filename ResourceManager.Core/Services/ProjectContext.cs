@@ -1,15 +1,17 @@
-﻿namespace ResourceManager.Services;
+﻿using System.Text.Json.Serialization;
+
+namespace ResourceManager.Core.Services;
 
 public class ProjectContext
 {
-    public string? ProjectDirectory { get; private set; }
+    [JsonInclude] public string? ProjectDirectory { get; private set; }
 
-    public string? BaseFilePath { get; private set; }
+    [JsonInclude] public string? BaseFilePath { get; private set; }
 
-    public string? TargetFilePath { get; private set; }
-    public string? TargetLanguage { get; private set; }
-    public string[] ResxFiles { get; private set; }
-    
+    [JsonInclude] public string? TargetFilePath { get; private set; }
+    [JsonInclude] public string? TargetLanguage { get; private set; }
+    [JsonInclude] public string[] ResxFiles { get; private set; } = Array.Empty<string>();
+
 
     public bool IsProjectLoaded =>
         !string.IsNullOrWhiteSpace(ProjectDirectory);
