@@ -133,17 +133,39 @@ namespace ResourceManager
 
             if (dialog.ShowDialog() == true)
             {
-                resourcesDirectory = dialog.FolderName;
+                try
+                {
+                    resourcesDirectory = dialog.FolderName;
 
-                _resxFiles = Directory.GetFiles(
-                    resourcesDirectory,
-                    "*.resx",
-                    SearchOption.TopDirectoryOnly);
-  
+                    _resxFiles = Directory.GetFiles(
+                        resourcesDirectory,
+                        "*.resx",
+                        SearchOption.TopDirectoryOnly);
+                
+                    if (_resxFiles.Length == 0)
+                    {
+                        MessageBox.Show(
+                        "No RESX files were found in the selected folder. Please select another folder.",
+                        "No RESX Files Found",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
 
-                FolderOverlay.Visibility = Visibility.Collapsed;
-                ResxSelectionOverlay.Visibility = Visibility.Visible;
-                LoadResxFiles();
+                        return;
+                    }
+
+                    FolderOverlay.Visibility = Visibility.Collapsed;
+                    ResxSelectionOverlay.Visibility = Visibility.Visible;
+                    LoadResxFiles();
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                    $"Failed to access the selected folder.\n\nDetails: {ex.Message}",
+                    "Folder Access Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                }
             }
         }
 
