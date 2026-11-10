@@ -52,13 +52,16 @@
                 <StackPanel Orientation="Horizontal"
                     VerticalAlignment="Center">
 
-                    <TextBlock Text="&#xf31c;"
+                    <TextBlock 
+                       x:Name="GenerateAIIcon"
+                       Text="&#xf31c;"
                        FontFamily="{StaticResource MaterialSymbols}"
                        FontSize="18"
                        Margin="0,0,8,0"
                        Typography.StandardLigatures="True"/>
 
-                    <TextBlock Text="Generate AI Translations"
+                    <TextBlock
+                       Text="Generate AI Translations"
                        FontSize="13"
                        FontWeight="SemiBold"
                        VerticalAlignment="Center"/>

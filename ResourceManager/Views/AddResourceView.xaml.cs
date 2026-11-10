@@ -37,6 +37,22 @@ namespace ResourceManager.Views
             UpdateTargetPanelVisible();
             TargetValueLabel.Text =
                 $"Target value ({_projectContext.TargetLanguage})";
+            UpdateAIButtonAppearance();
+        }
+        private void UpdateAIButtonAppearance()
+        {
+            if (string.IsNullOrWhiteSpace(_geminiKeyStorage.ReadApiKey()))
+            {
+                GenerateAIIcon.SetCurrentValue(TextBlock.TextProperty, "\uE897");
+
+                GenerateAIIcon.SetCurrentValue(TextBlock.ForegroundProperty, new SolidColorBrush(Color.FromRgb(128, 128, 128)));
+
+                SuggestTranslationButton.SetCurrentValue(BackgroundProperty, new SolidColorBrush(Color.FromRgb(128, 128, 128)));
+
+                SuggestTranslationButton.SetCurrentValue(ForegroundProperty, new SolidColorBrush(Color.FromRgb(128, 128, 128)));
+
+                SuggestTranslationButton.SetCurrentValue(IsEnabledProperty, false);
+            }
         }
         public void UpdateTargetPanelVisible()
         {

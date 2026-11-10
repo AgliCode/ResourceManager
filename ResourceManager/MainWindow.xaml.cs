@@ -80,11 +80,33 @@ namespace ResourceManager
 
         public void UpdateCompleteTranslationsButtonStyle()
         {
-            CompleteTranslationsButton.Style = (Style)CompleteTranslationsButton.FindResource(
-                ProjectContext.HasSeparateTargetFile
+            bool hasSeparateTargetFile = ProjectContext.HasSeparateTargetFile;
+            CompleteTranslationsButton.SetCurrentValue(StyleProperty, (Style)CompleteTranslationsButton.FindResource(
+                hasSeparateTargetFile
                     ? "ModernMenuButtonStyle"
                     : "DisabledMenuButtonStyle"
-            );
+            ));
+
+            CompleteTranslationsButton.SetCurrentValue(ToolTipProperty, hasSeparateTargetFile
+            ? null
+            : "To use this feature, the Base file and Target file must be different.");
+        }
+
+        public void UpdateAddNewLanguageButtonStyle()
+        {
+            bool hasApiKey = !string.IsNullOrWhiteSpace(GeminiKeyStorage.ReadApiKey());
+
+            AddNewLanguageButton.SetCurrentValue(
+            StyleProperty,
+            (Style)AddNewLanguageButton.FindResource(
+                hasApiKey
+                    ? "ModernMenuButtonStyle"
+                    : "DisabledMenuButtonStyle"
+            ));
+
+            AddNewLanguageButton.SetCurrentValue(ToolTipProperty, hasApiKey
+                ? null
+                : "Gemini API key must be configured.");
         }
 
         private async void CompleteTranslations_Click(object sender, RoutedEventArgs e)
@@ -161,10 +183,10 @@ namespace ResourceManager
                 catch (Exception ex)
                 {
                     MessageBox.Show(
-                    $"Failed to access the selected folder.\n\nDetails: {ex.Message}",
-                    "Folder Access Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                $"Failed to access the selected folder.\n\nDetails: {ex.Message}",
+                "Folder Access Error",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
                 }
             }
         }
@@ -233,6 +255,8 @@ namespace ResourceManager
             _geminiConfigurationTask?.TrySetResult(true);
             _geminiConfigurationTask = null;
 
+            UpdateAddNewLanguageButtonStyle();
+
         }
         private void CancelApiKey_Click(object sender, RoutedEventArgs e)
         {
@@ -247,6 +271,8 @@ namespace ResourceManager
 
             _geminiConfigurationTask?.TrySetResult(false);
             _geminiConfigurationTask = null;
+
+            UpdateAddNewLanguageButtonStyle();
         }
         private void OpenFolderSelection()
         {
@@ -289,11 +315,11 @@ namespace ResourceManager
             string? targetLanguage = (TargetLanguageComboBox.SelectedItem as ComboBoxItem)?.Tag?.ToString();
 
             ProjectContext.SetProject(resourcesDirectory, baseFilePath, targetFilePath, targetLanguage, _resxFiles);
-            ResxSelectionOverlay.Visibility = Visibility.Collapsed;
+            ResxSelectionOverlay.SetCurrentValue(VisibilityProperty, Visibility.Collapsed);
             UpdateCompleteTranslationsButtonStyle();
             var view = new DashboardView(ProjectContext);
 
-            MainContent.Content = view;
+            MainContent.SetCurrentValue(ContentProperty, view);
             await view.LoadStaticticAsync();
         }
 

@@ -129,8 +129,6 @@
                     
                     <Style.Triggers>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="ToolTip"
-                            Value="To use this feature, the Base file and Target file must be different."/>
                             <Setter Property="ToolTipService.ShowOnDisabled"
                             Value="True"/>
                         </Trigger>
@@ -167,6 +165,7 @@
                  Click="CompleteTranslations_Click"/>
             
             <RadioButton Content="Add new language" 
+                 x:Name="AddNewLanguageButton"
                  Style="{StaticResource ModernMenuButtonStyle}" 
                  Tag="&#xe894;"
                  Click="AddNewLanguage_Click"/>

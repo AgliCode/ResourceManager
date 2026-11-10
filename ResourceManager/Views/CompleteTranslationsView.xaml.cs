@@ -46,7 +46,26 @@ namespace ResourceManager.Views
             _projectContext = projectContext;
             _geminiKeyStorage = geminiKeyStorage;
             _mainWindow = mainWindow;
+
+            UpdateAIButtonAppearance();
         }
+
+        private void UpdateAIButtonAppearance()
+        {
+            if (string.IsNullOrWhiteSpace(_geminiKeyStorage.ReadApiKey()))
+            {
+                GenerateAIIcon.SetCurrentValue(TextBlock.TextProperty, "\uE897");
+
+                GenerateAIIcon.SetCurrentValue(TextBlock.ForegroundProperty, new SolidColorBrush(Color.FromRgb(128, 128, 128)));
+
+                GenerateAIButton.SetCurrentValue(BackgroundProperty, new SolidColorBrush(Color.FromRgb(128, 128, 128)));
+
+                GenerateAIButton.SetCurrentValue(ForegroundProperty, new SolidColorBrush(Color.FromRgb(128, 128, 128)));
+
+                GenerateAIButton.SetCurrentValue(IsEnabledProperty, false);
+            }
+        }
+
         private async void GenerateAIButton_Click(object sender, RoutedEventArgs e)
         {
             if (missingTranslations.Count > 0)
