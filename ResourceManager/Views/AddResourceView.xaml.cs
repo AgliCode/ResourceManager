@@ -26,10 +26,12 @@ namespace ResourceManager.Views
         private readonly GeminiKeyStorage _geminiKeyStorage;
         private readonly TranslationApiClient _translationApiClient = new();
         private readonly ResxWriter _resxWriter = new();
+        private readonly MainWindow _mainWindow;
 
-        public AddResourceView(ProjectContext projectContext, GeminiKeyStorage geminiKeyStorage)
+        public AddResourceView(ProjectContext projectContext, GeminiKeyStorage geminiKeyStorage, MainWindow mainWindow)
         {
             InitializeComponent();
+            _mainWindow = mainWindow;
             _projectContext = projectContext;
             _geminiKeyStorage = geminiKeyStorage;
             UpdateTargetPanelVisible();
@@ -58,6 +60,7 @@ namespace ResourceManager.Views
 
             try
             {
+                _mainWindow.ChangeLoadingVisible();
                 var items = new List<TranslationApiClient.TranslationApiItem>
                 {
                     new()
@@ -97,6 +100,7 @@ namespace ResourceManager.Views
             finally
             {
                 SuggestTranslationButton.IsEnabled = true;
+                _mainWindow.ChangeLoadingVisible();
             }
         }
 

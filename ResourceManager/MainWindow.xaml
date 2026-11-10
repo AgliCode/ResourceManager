@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:ResourceManager.Controls"
         xmlns:local="clr-namespace:ResourceManager"
         mc:Ignorable="d"
         Title="MainWindow" Height="700" Width="1000">
@@ -60,10 +61,10 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Boczne menu -->
+
+        <!-- Navigation -->
         <StackPanel Grid.Column="0" Background="#1D3025" Width="280">
             <StackPanel.Resources>
-                <!-- Wspólny styl dla nowoczesnych przycisków menu (wzorowany na obrazku) -->
                 <FontFamily x:Key="MaterialSymbols">/ResourceManager;component/Fonts/#Material Symbols Rounded</FontFamily>
                 <Style x:Key="ModernMenuButtonStyle" TargetType="RadioButton">
                     <Setter Property="Background" Value="Transparent"/>
@@ -140,14 +141,14 @@
 
             </StackPanel.Resources>
 
-            <!-- Nagłówek MENU -->
+            <!-- Header MENU -->
             <TextBlock Text="MENU"
                Foreground="#738A75"
                FontSize="12"
                FontWeight="SemiBold"
                Margin="25,25,10,15"/>
 
-            <!-- Przyciski nawigacyjne z dopasowanymi ikonami systemowymi Windows -->
+            <!-- Navigation -->
             <RadioButton x:Name="DashboardNavButton" Content="Dashboard" 
                  Style="{StaticResource ModernMenuButtonStyle}" 
                  Tag="&#xE871;" 
@@ -424,6 +425,11 @@
                 </StackPanel>
             </Border>
         </Grid>
+        <!-- Loading screen -->
+        <controls:LoadingOverlay x:Name="LoadingOverlay"
+                                 Grid.ColumnSpan="2"
+                                 Panel.ZIndex="100"
+                                 Visibility="Collapsed"/>
 
     </Grid>
 </Window>

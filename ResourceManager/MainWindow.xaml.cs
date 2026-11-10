@@ -89,14 +89,14 @@ namespace ResourceManager
 
         private async void CompleteTranslations_Click(object sender, RoutedEventArgs e)
         {
-            var view = new CompleteTranslationsView(ProjectContext, GeminiKeyStorage);
+            var view = new CompleteTranslationsView(ProjectContext, GeminiKeyStorage, this);
             MainContent.Content = view;
             await view.LoadTranslationsAsync();
         }
 
         private void AddEntry_Click(object sender, RoutedEventArgs e)
         {
-            var view = new AddResourceView(ProjectContext, GeminiKeyStorage);
+            var view = new AddResourceView(ProjectContext, GeminiKeyStorage, this);
             MainContent.Content = view;
         }
 
@@ -109,7 +109,7 @@ namespace ResourceManager
 
         private async void AddNewLanguage_Click(object sender, RoutedEventArgs e)
         {
-            var view = new AddNewLanguageView(ProjectContext, GeminiKeyStorage);
+            var view = new AddNewLanguageView(ProjectContext, GeminiKeyStorage, this);
             MainContent.Content = view;
         }
         private async void BrowseResources_Click(object sender, RoutedEventArgs e)
@@ -294,5 +294,11 @@ namespace ResourceManager
             return _geminiConfigurationTask.Task;
         }
 
+        public void ChangeLoadingVisible()
+        {
+            if(LoadingOverlay.Visibility == Visibility.Visible) LoadingOverlay.Visibility = Visibility.Collapsed;
+            else LoadingOverlay.Visibility = Visibility.Visible;
+        }
+    
     }
 }

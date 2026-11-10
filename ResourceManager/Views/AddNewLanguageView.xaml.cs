@@ -31,11 +31,14 @@ namespace ResourceManager.Views
         private string? _outputFilePath;
         private readonly ResxWriter _resxWriter = new();
         const int batchSize = 300;
+        private readonly MainWindow _mainWindow;
         public AddNewLanguageView(
             ProjectContext projectContext,
-            GeminiKeyStorage geminiKeyStorage)
+            GeminiKeyStorage geminiKeyStorage,
+            MainWindow mainwindow)
         {
             InitializeComponent();
+            _mainWindow = mainwindow;
             _projectContext = projectContext;
             _geminiKeyStorage = geminiKeyStorage;
             TargetLanguageComboBox.SelectionChanged += TargetLanguageComboBox_SelectionChanged;
@@ -210,6 +213,7 @@ namespace ResourceManager.Views
 
             try
             {
+                _mainWindow.ChangeLoadingVisible();
                 var items = selectedEntries.Select(entry =>
                     new TranslationApiClient.TranslationApiItem
                     {
@@ -275,6 +279,10 @@ namespace ResourceManager.Views
                     "Translation Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
+            }
+            finally
+            {
+                _mainWindow.ChangeLoadingVisible();
             }
             
 

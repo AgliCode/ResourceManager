@@ -33,17 +33,19 @@ namespace ResourceManager.Views
         private readonly ProjectContext _projectContext;
         private readonly GeminiKeyStorage _geminiKeyStorage;
         const int batchSize = 300;
+        private readonly MainWindow _mainWindow;
 
 
 
         public CompleteTranslationsView(
             ProjectContext projectContext,
-            GeminiKeyStorage geminiKeyStorage)
+            GeminiKeyStorage geminiKeyStorage,
+            MainWindow mainWindow)
         {
             InitializeComponent();
             _projectContext = projectContext;
             _geminiKeyStorage = geminiKeyStorage;
-            
+            _mainWindow = mainWindow;
         }
 
         public async Task LoadTranslationsAsync()
@@ -91,7 +93,9 @@ namespace ResourceManager.Views
 
                 if (missingTranslations.Count > 0)
                 {
-                    
+                _mainWindow.ChangeLoadingVisible();
+
+
                     try
                     {
                         var itemsToTranslate = missingTranslations
@@ -138,6 +142,10 @@ namespace ResourceManager.Views
                             "AI Error",
                             MessageBoxButton.OK,
                             MessageBoxImage.Error);
+                    }
+                    finally
+                    {
+                        _mainWindow.ChangeLoadingVisible();
                     }
 
                     actual_id = 0;
