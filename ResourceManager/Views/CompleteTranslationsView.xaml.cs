@@ -47,7 +47,81 @@ namespace ResourceManager.Views
             _geminiKeyStorage = geminiKeyStorage;
             _mainWindow = mainWindow;
         }
+        private async void GenerateAIButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (missingTranslations.Count > 0)
+            {
+                _mainWindow.ChangeLoadingVisible();
+                aiTranslations.Clear();
 
+                try
+                {
+                    var itemsToTranslate = missingTranslations
+                        .Select(resource => new TranslationApiClient.TranslationApiItem
+                        {
+                            Key = resource.Name,
+                            PolishText = resource.Value,
+                            Comment = resource.Comment
+                        })
+                        .ToList();
+
+
+                    for (int i = 0; i < itemsToTranslate.Count; i += batchSize)
+                    {
+                        var batch = itemsToTranslate
+                            .Skip(i)
+                            .Take(batchSize)
+                            .ToList();
+
+                        var batchTranslations = await _translationApiClient.TranslateAsync(
+                                batch,
+                                _geminiKeyStorage.ReadApiKey()!,
+                                _projectContext.TargetLanguage!);
+
+                        foreach (var translation in batchTranslations)
+                        {
+                            aiTranslations[translation.Key] = translation.Value;
+                        }
+                        await Task.Delay(TimeSpan.FromSeconds(5));
+
+                    }
+                    actual_id = 0;
+                    IncompleteEntriesList.SelectedIndex = 0;
+                    DisplayCurrentEntry();
+
+
+                    MessageBox.Show(
+                        $"Received  {aiTranslations.Count} translation suggestions.",
+                        "AI Translation",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        $"Failed to retrieve AI translations:\n{ex.Message}",
+                        "AI Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                }
+                finally
+                {
+                    _mainWindow.ChangeLoadingVisible();
+                }
+
+            }
+            else
+            {
+                IncompleteEntriesList.ItemsSource = null;
+
+                MessageBox.Show(
+                    "No missing translations were found.",
+                    "Translation Check",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+        }
         public async Task LoadTranslationsAsync()
         {
             if (!_projectContext.IsProjectLoaded)
@@ -57,7 +131,6 @@ namespace ResourceManager.Views
             }
 
             approvedTranslations.Clear();
-            aiTranslations.Clear();
             actual_id = 0;
 
             NameTextBox.Clear();
@@ -90,79 +163,6 @@ namespace ResourceManager.Views
 
                 IncompleteEntriesList.ItemsSource = missingTranslations;
                 UpdateNavigationButtons();
-
-                if (missingTranslations.Count > 0)
-                {
-                _mainWindow.ChangeLoadingVisible();
-
-
-                    try
-                    {
-                        var itemsToTranslate = missingTranslations
-                            .Select(resource => new TranslationApiClient.TranslationApiItem
-                            {
-                                Key = resource.Name,
-                                PolishText = resource.Value,
-                                Comment = resource.Comment
-                            })
-                            .ToList();
-
-
-                    for (int i = 0; i < itemsToTranslate.Count; i += batchSize)
-                    {
-                        var batch = itemsToTranslate
-                            .Skip(i)
-                            .Take(batchSize)
-                            .ToList();
-
-                        var batchTranslations = await _translationApiClient.TranslateAsync(
-                                batch,
-                                _geminiKeyStorage.ReadApiKey()!,
-                                _projectContext.TargetLanguage!);
-
-                        foreach (var translation in batchTranslations)
-                        {
-                            aiTranslations[translation.Key] = translation.Value;
-                        }
-                        await Task.Delay(TimeSpan.FromSeconds(5));
-                    }
-                    
-
-                        MessageBox.Show(
-                            $"Received  {aiTranslations.Count} translation suggestions.",
-                            "AI Translation",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Information);
-
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(
-                            $"Failed to retrieve AI translations:\n{ ex.Message}",
-                            "AI Error",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Error);
-                    }
-                    finally
-                    {
-                        _mainWindow.ChangeLoadingVisible();
-                    }
-
-                    actual_id = 0;
-                    IncompleteEntriesList.SelectedIndex = 0;
-                    DisplayCurrentEntry();
-                }
-                else
-                {
-                    IncompleteEntriesList.ItemsSource = null;
-
-                    MessageBox.Show(
-                        "No missing translations were found.",
-                        "Translation Check",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information);
-                }
-
         }
             
         
