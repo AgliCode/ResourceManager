@@ -1,4 +1,9 @@
-﻿using ResourceManager.Views;
+﻿using Microsoft.Win32;
+using ResourceManager.Core.Services;
+using ResourceManager.TranslationApi.Services;
+using ResourceManager.Views;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,10 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Microsoft.Win32;
-using ResourceManager.Core.Services;
-using System.IO;
-using ResourceManager.TranslationApi.Services;
+using System.Net.Http;
 
 namespace ResourceManager
 {
@@ -30,11 +32,14 @@ namespace ResourceManager
 
         private ApiKeyStorageService _ApiKeyStorageService = new();
         private bool isInitialSetup = true;
+        private readonly ApiProcessManager _apiProcessManager = new();
 
         public MainWindow()
         {
             InitializeComponent();
-            
+            Loaded += MainWindow_Loaded;
+            Closing += MainWindow_Closing;
+
             string? savedApiKey = _ApiKeyStorageService.Load();
             LoadLanguages();
 
@@ -46,6 +51,31 @@ namespace ResourceManager
             {
                 GeminiOverlay.Visibility = Visibility.Visible;
             }
+        }
+
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string apiDirectory = System.IO.Path.GetFullPath(
+                    System.IO.Path.Combine(AppContext.BaseDirectory, "..", "API"));
+
+                await _apiProcessManager.StartAsync(apiDirectory);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Could not start the API:\n{ex.Message}",
+                    "API Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+
+                Close();
+            }
+        }
+        private void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            _apiProcessManager.Dispose();
         }
 
         public void UpdateCompleteTranslationsButtonStyle()

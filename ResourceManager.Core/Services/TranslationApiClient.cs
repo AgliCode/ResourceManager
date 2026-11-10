@@ -35,7 +35,7 @@ public class TranslationApiClient
     {
         _httpClient = new HttpClient
         {
-            BaseAddress = new Uri("https://localhost:7221/")
+            BaseAddress = new Uri("http://127.0.0.1:5177/")
         };
     }
     public async Task<Dictionary<string, string>> TranslateAsync(

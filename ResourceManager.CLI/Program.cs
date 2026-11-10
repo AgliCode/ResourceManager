@@ -31,6 +31,20 @@ configurationManager.LoadProjectConfiguration();
 
 Console.WriteLine("Core services loaded successfully!");
 
+using var apiProcessManager = new ApiProcessManager();
+
+try
+{
+    string apiDirectory = Path.GetFullPath(
+        Path.Combine(AppContext.BaseDirectory, "..", "API"));
+
+    await apiProcessManager.StartAsync(apiDirectory);
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Could not start the API: {ex.Message}");
+    return;
+}
 
 if (args.Length == 0)
 {

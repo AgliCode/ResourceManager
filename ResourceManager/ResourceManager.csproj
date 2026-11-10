@@ -6,10 +6,15 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>ResourceManager.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Fonts\MaterialSymbolsRounded-VariableFont_FILL,GRAD,opsz,wght.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="ResourceManager.ico" />
   </ItemGroup>
 
   <ItemGroup>
