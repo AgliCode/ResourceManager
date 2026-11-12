@@ -1,20 +1,10 @@
-﻿using Microsoft.Win32;
-using ResourceManager.Core.Models;
+﻿using ResourceManager.Core.Models;
 using ResourceManager.Core.Services;
 using ResourceManager.TranslationApi.Services;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using static System.Net.WebRequestMethods;
+
 
 
 namespace ResourceManager.Views
@@ -25,7 +15,6 @@ namespace ResourceManager.Views
         private readonly ResourceReader _resourceReader = new();
         private List<ResourceEntry> missingTranslations = new();
         private Dictionary<string, string> approvedTranslations = new();
-        private string? englishFilePath;
         private int actual_id = 0;
         private readonly TranslationApiClient _translationApiClient = new();
         private Dictionary<string, string> aiTranslations = new();
@@ -34,7 +23,6 @@ namespace ResourceManager.Views
         private readonly GeminiKeyStorage _geminiKeyStorage;
         const int batchSize = 300;
         private readonly MainWindow _mainWindow;
-
 
 
         public CompleteTranslationsView(
@@ -105,7 +93,7 @@ namespace ResourceManager.Views
 
                     }
                     actual_id = 0;
-                    IncompleteEntriesList.SelectedIndex = 0;
+                    IncompleteEntriesList.SetCurrentValue(System.Windows.Controls.Primitives.Selector.SelectedIndexProperty, 0);
                     DisplayCurrentEntry();
 
 
@@ -132,7 +120,7 @@ namespace ResourceManager.Views
             }
             else
             {
-                IncompleteEntriesList.ItemsSource = null;
+                IncompleteEntriesList.SetCurrentValue(ItemsControl.ItemsSourceProperty, null);
 
                 MessageBox.Show(
                     "No missing translations were found.",
@@ -155,12 +143,12 @@ namespace ResourceManager.Views
             NameTextBox.Clear();
             ValueTextBox.Clear();
             CommentTextBox.Clear();
-            EnglishValueTextBox.Clear();
+            TargetValueTextBox.Clear();
 
-            PreviousButton.IsEnabled = false;
-            NextButton.IsEnabled = false;
+            PreviousButton.SetCurrentValue(IsEnabledProperty, false);
+            NextButton.SetCurrentValue(IsEnabledProperty, false);
 
-            IncompleteEntriesList.ItemsSource = null;
+            IncompleteEntriesList.SetCurrentValue(ItemsControl.ItemsSourceProperty, null);
             missingTranslations.Clear();
 
                 try
@@ -180,7 +168,7 @@ namespace ResourceManager.Views
                     return;
                 }
 
-                IncompleteEntriesList.ItemsSource = missingTranslations;
+                IncompleteEntriesList.SetCurrentValue(ItemsControl.ItemsSourceProperty, missingTranslations);
                 UpdateNavigationButtons();
         }
             
@@ -188,17 +176,13 @@ namespace ResourceManager.Views
 
         private void NextEntry_Click(object sender, RoutedEventArgs e)
         {
-            
             actual_id = (actual_id + 1) % missingTranslations.Count;
-
             DisplayCurrentEntry();
-
         }
 
         private void PreviousEntry_Click(object sender, RoutedEventArgs e)
         {
             actual_id = (actual_id - 1) % missingTranslations.Count;
-
             DisplayCurrentEntry();
         }
 
@@ -207,24 +191,24 @@ namespace ResourceManager.Views
             if (actual_id < 0 || actual_id >= missingTranslations.Count)
                 return;
 
-            IncompleteEntriesList.SelectedIndex = actual_id;
+            IncompleteEntriesList.SetCurrentValue(System.Windows.Controls.Primitives.Selector.SelectedIndexProperty, actual_id);
             var resource = missingTranslations[actual_id];
 
-            NameTextBox.Text = resource.Name;
-            ValueTextBox.Text = resource.Value;
-            CommentTextBox.Text = resource.Comment;
+            NameTextBox.SetCurrentValue(TextBox.TextProperty, resource.Name);
+            ValueTextBox.SetCurrentValue(TextBox.TextProperty, resource.Value);
+            CommentTextBox.SetCurrentValue(TextBox.TextProperty, resource.Comment);
 
             if (approvedTranslations.TryGetValue(resource.Name, out var approved))
             {
-                EnglishValueTextBox.Text = approved;
+                TargetValueTextBox.SetCurrentValue(TextBox.TextProperty, approved);
             }
             else if (aiTranslations.TryGetValue(resource.Name, out var suggestion))
             {
-                EnglishValueTextBox.Text = suggestion;
+                TargetValueTextBox.SetCurrentValue(TextBox.TextProperty, suggestion);
             }
             else
             {
-                EnglishValueTextBox.Text = resource.EnglishValue;
+                TargetValueTextBox.SetCurrentValue(TextBox.TextProperty, resource.TargetValue);
             }
         }
 
@@ -242,14 +226,25 @@ namespace ResourceManager.Views
 
         private void ApproveAndNext_Click(object sender, RoutedEventArgs e)
         {
-            string translation = EnglishValueTextBox.Text.Trim();
+            string translation = TargetValueTextBox.Text.Trim();
             var resource = missingTranslations[actual_id];
+
             approvedTranslations[resource.Name] = translation;
+
+            _resxWriter.SaveTranslationToResx(
+                approvedTranslations,
+                _projectContext.TargetFilePath);
+
             if (actual_id < missingTranslations.Count - 1)
             {
                 actual_id++;
-                IncompleteEntriesList.SelectedIndex = actual_id;
+                IncompleteEntriesList.SetCurrentValue(
+                    System.Windows.Controls.Primitives.Selector.SelectedIndexProperty,
+                    actual_id);
+
+                DisplayCurrentEntry();
             }
+
             IncompleteEntriesList.Items.Refresh();
         }
 
@@ -257,15 +252,26 @@ namespace ResourceManager.Views
 
         private void SaveAll_Click(object sender, RoutedEventArgs e)
         {
-          _resxWriter.SaveTranslationToResx(approvedTranslations, _projectContext.TargetFilePath); 
+            var translationsToSave = new Dictionary<string, string>(aiTranslations);
+
+            foreach (var translation in approvedTranslations)
+            {
+                translationsToSave[translation.Key] = translation.Value;
+            }
+
+            _resxWriter.SaveTranslationToResx(
+                translationsToSave,
+                _projectContext.TargetFilePath);
         }
 
         private void UpdateNavigationButtons()
         {
             bool hasEntries = missingTranslations.Count > 0;
 
-            PreviousButton.IsEnabled = hasEntries;
-            NextButton.IsEnabled = hasEntries;
+            PreviousButton.SetCurrentValue(IsEnabledProperty, hasEntries);
+            NextButton.SetCurrentValue(IsEnabledProperty, hasEntries);
         }
+
+
     }
 }

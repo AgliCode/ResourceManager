@@ -1,25 +1,12 @@
 ﻿using ResourceManager.Core.Services;
 using ResourceManager.TranslationApi.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+
 
 namespace ResourceManager.Views
 {
-    /// <summary>
-    /// Logika interakcji dla klasy AddResourceView.xaml
-    /// </summary>
     public partial class AddResourceView : UserControl
     {
         private readonly ProjectContext _projectContext;
@@ -56,15 +43,15 @@ namespace ResourceManager.Views
         }
         public void UpdateTargetPanelVisible()
         {
-            TargetValuePanel.Visibility = _projectContext.HasSeparateTargetFile
+            TargetValuePanel.SetCurrentValue(VisibilityProperty, _projectContext.HasSeparateTargetFile
                     ? Visibility.Visible
-                    : Visibility.Collapsed;
-            TargetValueTextBox.Visibility = _projectContext.HasSeparateTargetFile
+                    : Visibility.Collapsed);
+            TargetValueTextBox.SetCurrentValue(VisibilityProperty, _projectContext.HasSeparateTargetFile
                     ? Visibility.Visible
-                    : Visibility.Collapsed;
-            SuggestTranslationButton.Visibility = _projectContext.HasSeparateTargetFile
+                    : Visibility.Collapsed);
+            SuggestTranslationButton.SetCurrentValue(VisibilityProperty, _projectContext.HasSeparateTargetFile
                     ? Visibility.Visible
-                    : Visibility.Collapsed;
+                    : Visibility.Collapsed);
         }
 
         private async void SuggestTranslationButton_Click(object sender, RoutedEventArgs e)
@@ -94,7 +81,7 @@ namespace ResourceManager.Views
 
                 if (translations.TryGetValue(keyName, out string? translatedText))
                 {
-                    TargetValueTextBox.Text = translatedText;
+                    TargetValueTextBox.SetCurrentValue(TextBox.TextProperty, translatedText);
                 }
                 else
                 {
@@ -115,7 +102,7 @@ namespace ResourceManager.Views
             }
             finally
             {
-                SuggestTranslationButton.IsEnabled = true;
+                SuggestTranslationButton.SetCurrentValue(IsEnabledProperty, true);
                 _mainWindow.ChangeLoadingVisible();
             }
         }
@@ -139,7 +126,6 @@ namespace ResourceManager.Views
                     "Missing Information",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
-
                 return;
             }
 

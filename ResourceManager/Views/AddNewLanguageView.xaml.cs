@@ -1,20 +1,9 @@
 ﻿using ResourceManager.Core.Models;
 using ResourceManager.Core.Services;
 using ResourceManager.TranslationApi.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+
 
 
 namespace ResourceManager.Views
@@ -32,6 +21,8 @@ namespace ResourceManager.Views
         private readonly ResxWriter _resxWriter = new();
         const int batchSize = 300;
         private readonly MainWindow _mainWindow;
+
+        private bool isUpdatingSelectAll = false;
         public AddNewLanguageView(
             ProjectContext projectContext,
             GeminiKeyStorage geminiKeyStorage,
@@ -66,7 +57,7 @@ namespace ResourceManager.Views
                 });
             }
 
-            TargetLanguageComboBox.SelectedValuePath = "Tag";
+            TargetLanguageComboBox.SetCurrentValue(System.Windows.Controls.Primitives.Selector.SelectedValuePathProperty, "Tag");
         }
         private void TargetLanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -80,7 +71,7 @@ namespace ResourceManager.Views
                 return;
 
             string languageCode = selectedLanguage.Substring(separatorIndex + 3);
-            OutputFileNameTextBox.Text = $"Resources.{languageCode}";
+            OutputFileNameTextBox.SetCurrentValue(TextBox.TextProperty, $"Resources.{languageCode}");
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -135,8 +126,7 @@ namespace ResourceManager.Views
 
             try
             {
-                var resources = _resourceReader.ReadResources(
-                    _projectContext.BaseFilePath!);
+                var resources = _resourceReader.ReadResources(_projectContext.BaseFilePath!);
 
                 entries = resources.Select(resource => new NewLanguageEntry
                 {
@@ -144,14 +134,15 @@ namespace ResourceManager.Views
                     Value = resource.Value,
                     Comment = resource.Comment,
                     IsSelected = true
-                }).ToList();
+                })
+                .ToList();
 
-                EntriesItemsControl.ItemsSource = entries;
+                EntriesItemsControl.SetCurrentValue(ItemsControl.ItemsSourceProperty, entries);
 
-                SelectAllCheckBox.IsChecked = true;
+                SelectAllCheckBox.SetCurrentValue(System.Windows.Controls.Primitives.ToggleButton.IsCheckedProperty, true);
 
-                ConfigurationPanel.Visibility = Visibility.Collapsed;
-                EntriesPanel.Visibility = Visibility.Visible;
+                ConfigurationPanel.SetCurrentValue(VisibilityProperty, Visibility.Collapsed);
+                EntriesPanel.SetCurrentValue(VisibilityProperty, Visibility.Visible);
             }
             catch (System.Exception ex)
             {
@@ -165,17 +156,22 @@ namespace ResourceManager.Views
 
         private void EntryCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            if (entries.All(entry => entry.IsSelected))
+            isUpdatingSelectAll = true;
+
+            try
             {
-            SelectAllCheckBox.IsChecked = true;
+                bool allSelected = entries.Count > 0 && entries.All(entry => entry.IsSelected);
+                SelectAllCheckBox.SetCurrentValue(System.Windows.Controls.Primitives.ToggleButton.IsCheckedProperty, allSelected);
             }
-            else
+            finally
             {
-            SelectAllCheckBox.IsChecked = false;
+                isUpdatingSelectAll = false;
             }
         }
         private void SelectAllCheckBox_Checked(object sender, RoutedEventArgs e)
         {
+            if (isUpdatingSelectAll)
+                return;
             foreach (var entry in entries)
                 entry.IsSelected = true;
 
@@ -184,6 +180,8 @@ namespace ResourceManager.Views
 
         private void SelectAllCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
+            if (isUpdatingSelectAll)
+                return;
             foreach (var entry in entries)
                 entry.IsSelected = false;
 
@@ -248,7 +246,6 @@ namespace ResourceManager.Views
                     if (translations.TryGetValue(entry.Name, out string? translation))
                     {
                         entry.TranslatedValue = translation;
-                        
                     }
                 }
 

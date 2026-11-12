@@ -1,21 +1,15 @@
 ﻿using ResourceManager.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
 
 namespace ResourceManager.Core.Services
 {
     public class ResxWriter
     {
-        public void SaveTranslationToResx(Dictionary<string, string> translations, string? englishFilePath)
+        public static void SaveTranslationToResx(Dictionary<string, string> translations, string? targetFilePath)
         {
-            if (string.IsNullOrEmpty(englishFilePath))
+            if (string.IsNullOrEmpty(targetFilePath))
                 throw new InvalidOperationException("No path to the RESX file was provided.");
 
-            var document = System.Xml.Linq.XDocument.Load(englishFilePath);
+            var document = System.Xml.Linq.XDocument.Load(targetFilePath);
 
             foreach (var translation in translations)
             {
@@ -27,7 +21,6 @@ namespace ResourceManager.Core.Services
                 if (dataElement != null) dataElement.Element("value")!.Value = translation.Value;
                 else
                 {
-                    // Add translation
                     document.Root?.Add(
                     new System.Xml.Linq.XElement("data",
                         new System.Xml.Linq.XAttribute("name", translation.Key),
@@ -36,13 +29,11 @@ namespace ResourceManager.Core.Services
                         )
                     );
                 }
-
             }
 
-
-            document.Save(englishFilePath);
+            document.Save(targetFilePath);
         }
-        public void CreateTranslatedResx(string sourceFilePath,string outputFilePath,IEnumerable<NewLanguageEntry> entries)
+        public static void CreateTranslatedResx(string sourceFilePath,string outputFilePath, IEnumerable<NewLanguageEntry> entries)
         {
             var sourceDocument = System.Xml.Linq.XDocument.Load(sourceFilePath);
 
@@ -59,8 +50,6 @@ namespace ResourceManager.Core.Services
 
             foreach (var entry in entries)
             {
-  
-
                 var originalData = sourceRoot.Elements()
                     .FirstOrDefault(element =>
                         element.Name.LocalName == "data" &&
@@ -120,7 +109,6 @@ namespace ResourceManager.Core.Services
                     ?? throw new InvalidOperationException("Invalid target RESX file.");
             }
 
-            // Check whether the key already exists in either file.
             bool keyExists = baseRoot.Elements().Any(element =>
                 element.Name.LocalName == "data" &&
                 (string?)element.Attribute("name") == key);
@@ -138,14 +126,12 @@ namespace ResourceManager.Core.Services
                     $"The resource key '{key}' already exists in one of the files.");
             }
 
-            // Add entry to the base file.
             baseRoot.Add(CreateDataElement(
                 baseRoot,
                 key,
                 neutralValue,
                 comment));
 
-            // Add entry to the target file only if it exists.
             if (targetRoot != null)
             {
                 targetRoot.Add(CreateDataElement(

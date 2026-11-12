@@ -3,7 +3,7 @@
 ; Non-commercial use only.
 
 #define MyAppName "Resource Manager"
-#define MyAppVersion "1"
+#define MyAppVersion "1.0.0"
 #define MyAppPublisher "AgliCode"
 #define MyAppExeName "ResourceManager.exe"
 #define MyAppAssocName ""

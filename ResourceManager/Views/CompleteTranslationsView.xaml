@@ -98,12 +98,6 @@
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal"
                                         Margin="5,8">
-                                <Ellipse Width="10"
-                                         Height="10"
-                                         Margin="0,0,10,0"
-                                         VerticalAlignment="Center"
-                                         Fill="{Binding StatusColor}"/>
-
                                 <TextBlock Text="{Binding Name}"
                                            VerticalAlignment="Center"
                                            Foreground="#444444"
@@ -156,7 +150,7 @@
 
                         <TextBlock Text="Translated value"/>
 
-                        <TextBox x:Name="EnglishValueTextBox" 
+                        <TextBox x:Name="TargetValueTextBox" 
                                  Height="65"
                                  TextWrapping="Wrap"
                                  AcceptsReturn="True"

@@ -1,25 +1,13 @@
 ﻿using ResourceManager.Core.Services;
 using ResourceManager.TranslationApi.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+
 
 namespace ResourceManager.Views
 {
-    /// <summary>
-    /// Logika interakcji dla klasy SettingsView.xaml
-    /// </summary>
+
     public partial class SettingsView : UserControl
     {
         private readonly ProjectContext _projectContext;
@@ -71,7 +59,7 @@ namespace ResourceManager.Views
                 });
             }
 
-            TargetLanguageComboBox.SelectedValuePath = "Tag";
+            TargetLanguageComboBox.SetCurrentValue(System.Windows.Controls.Primitives.Selector.SelectedValuePathProperty, "Tag");
         }
 
         private void UpdateApiKeyStatus()
@@ -79,22 +67,22 @@ namespace ResourceManager.Views
             if (string.IsNullOrWhiteSpace(_geminiKeyStorage.ReadApiKey()))
             {
                 ApiKeyStatusBadge.Text = "Not configured";
-                ApiKeyStatusBadge.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fc3838"));             
+                ApiKeyStatusBadge.SetCurrentValue(TextBlock.ForegroundProperty, new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fc3838")));             
             }
             else
             {
                 ApiKeyStatusBadge.Text = "Configured";
-                ApiKeyStatusBadge.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#39734A"));
+                ApiKeyStatusBadge.SetCurrentValue(TextBlock.ForegroundProperty, new SolidColorBrush((Color)ColorConverter.ConvertFromString("#39734A")));
             }
             if (_geminiKeyStorage.SaveApiKeyLocally)
             {
                ApiKeyStorageStatusBadge.Text = "Configured";
-               ApiKeyStorageStatusBadge.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#39734A"));
+               ApiKeyStorageStatusBadge.SetCurrentValue(TextBlock.ForegroundProperty, new SolidColorBrush((Color)ColorConverter.ConvertFromString("#39734A")));
             }
             else
             {
                 ApiKeyStorageStatusBadge.Text = "Not configured";
-                ApiKeyStorageStatusBadge.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fc3838"));
+                ApiKeyStorageStatusBadge.SetCurrentValue(TextBlock.ForegroundProperty, new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fc3838")));
             }
         }
         public void Change_Click(object sender, EventArgs e)
@@ -107,6 +95,7 @@ namespace ResourceManager.Views
             _geminiKeyStorage.ClearApiKeyFromMemory();
             _geminiKeyStorage.DeleteSavedApiKey();
             UpdateApiKeyStatus();
+            _mainWindow.UpdateAddNewLanguageButtonStyle();
 
         }
 

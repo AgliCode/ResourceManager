@@ -31,27 +31,33 @@ namespace ResourceManager.Core.Services
             .ToList();
         }
 
-        public List<ResourceEntry> FindMissingTranslations(
-            string polishPath,
-            string englishPath)
+        public List<ResourceEntry> FindMissingTranslations(string basePath, string targethPath)
         {
-            var polishResources = ReadResources(polishPath);
-            var englishResources = ReadResources(englishPath);
+            var polishResources = ReadResources(basePath);
+            var englishResources = ReadResources(targethPath);
 
             foreach (var resource in polishResources)
             {
-                var englishResource = englishResources
+                var targetResource = englishResources
                     .FirstOrDefault(x => x.Name == resource.Name);
 
-                resource.EnglishKeyExists = englishResource != null;
-                resource.EnglishValue = englishResource?.Value;
+                resource.TargetKeyExists = targetResource != null;
+                resource.TargetValue = targetResource?.Value;
             }
 
             return polishResources
                 .Where(resource =>
-                    !resource.EnglishKeyExists ||
-                    string.IsNullOrWhiteSpace(resource.EnglishValue))
+                    !resource.TargetKeyExists ||
+                    string.IsNullOrWhiteSpace(resource.TargetValue))
                 .ToList();
+        }
+
+        public string[] GetResxFiles(string folderPath)
+        {
+            return Directory.GetFiles(
+                folderPath,
+                "*.resx",
+                SearchOption.TopDirectoryOnly);
         }
     }
 }

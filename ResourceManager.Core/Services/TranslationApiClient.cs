@@ -1,6 +1,5 @@
-﻿using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text.Json;
+﻿using System.Net.Http.Json;
+
 
 namespace ResourceManager.Core.Services;
 

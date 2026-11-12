@@ -16,9 +16,9 @@ namespace ResourceManager.Core.Models
 
         public string? Comment { get; set; }
 
-        public string? EnglishValue { get; set; }
+        public string? TargetValue { get; set; }
 
-        public bool EnglishKeyExists { get; set; }
+        public bool TargetKeyExists { get; set; }
 
     }
 }

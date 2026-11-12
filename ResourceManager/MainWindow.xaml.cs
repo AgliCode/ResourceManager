@@ -2,25 +2,15 @@
 using ResourceManager.Core.Services;
 using ResourceManager.TranslationApi.Services;
 using ResourceManager.Views;
-using System.Diagnostics;
 using System.IO;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Net.Http;
+
+using ResourceManager.Helpers;
 
 namespace ResourceManager
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
+
     public partial class MainWindow : Window
     {
         public ProjectContext ProjectContext { get; } = new();
@@ -33,6 +23,7 @@ namespace ResourceManager
         private ApiKeyStorageService _ApiKeyStorageService = new();
         private bool isInitialSetup = true;
         private readonly ApiProcessManager _apiProcessManager = new();
+        private readonly ResourceReader reader = new();
 
         public MainWindow()
         {
@@ -80,70 +71,54 @@ namespace ResourceManager
 
         public void UpdateCompleteTranslationsButtonStyle()
         {
-            bool hasSeparateTargetFile = ProjectContext.HasSeparateTargetFile;
-            CompleteTranslationsButton.SetCurrentValue(StyleProperty, (Style)CompleteTranslationsButton.FindResource(
-                hasSeparateTargetFile
-                    ? "ModernMenuButtonStyle"
-                    : "DisabledMenuButtonStyle"
-            ));
-
-            CompleteTranslationsButton.SetCurrentValue(ToolTipProperty, hasSeparateTargetFile
-            ? null
-            : "To use this feature, the Base file and Target file must be different.");
+            StyleHelper.UpdateNavButtonStyle(
+                CompleteTranslationsButton,
+                ProjectContext.HasSeparateTargetFile,
+                "To use this feature, the Base file and Target file must be different.");
         }
 
         public void UpdateAddNewLanguageButtonStyle()
         {
-            bool hasApiKey = !string.IsNullOrWhiteSpace(GeminiKeyStorage.ReadApiKey());
-
-            AddNewLanguageButton.SetCurrentValue(
-            StyleProperty,
-            (Style)AddNewLanguageButton.FindResource(
-                hasApiKey
-                    ? "ModernMenuButtonStyle"
-                    : "DisabledMenuButtonStyle"
-            ));
-
-            AddNewLanguageButton.SetCurrentValue(ToolTipProperty, hasApiKey
-                ? null
-                : "Gemini API key must be configured.");
+            StyleHelper.UpdateNavButtonStyle(
+                AddNewLanguageButton,
+                !string.IsNullOrWhiteSpace(GeminiKeyStorage.ReadApiKey()),
+                "Gemini API key must be configured.");
         }
 
         private async void CompleteTranslations_Click(object sender, RoutedEventArgs e)
         {
             var view = new CompleteTranslationsView(ProjectContext, GeminiKeyStorage, this);
-            MainContent.Content = view;
+            MainContent.SetCurrentValue(ContentProperty, view);
             await view.LoadTranslationsAsync();
         }
 
         private void AddEntry_Click(object sender, RoutedEventArgs e)
         {
             var view = new AddResourceView(ProjectContext, GeminiKeyStorage, this);
-            MainContent.Content = view;
+            MainContent.SetCurrentValue(ContentProperty, view);
         }
 
         private async void Dashboard_Click(object sender, RoutedEventArgs e)
         {
             var view = new DashboardView(ProjectContext);
-            MainContent.Content = view;
+            MainContent.SetCurrentValue(ContentProperty, view);
             await view.LoadStaticticAsync();
         }
 
         private async void AddNewLanguage_Click(object sender, RoutedEventArgs e)
         {
             var view = new AddNewLanguageView(ProjectContext, GeminiKeyStorage, this);
-            MainContent.Content = view;
+            MainContent.SetCurrentValue(ContentProperty, view);
         }
         private async void BrowseResources_Click(object sender, RoutedEventArgs e)
         {
             var view = new BrowseResources(ProjectContext);
-
-            MainContent.Content = view;
+            MainContent.SetCurrentValue(ContentProperty, view);
         }
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
             var view = new SettingsView(ProjectContext, GeminiKeyStorage, this);
-            MainContent.Content = view;
+            MainContent.SetCurrentValue(ContentProperty, view);
         }
 
         private void SelectProjectFolder_Click(object sender, RoutedEventArgs e)
@@ -159,11 +134,9 @@ namespace ResourceManager
                 {
                     resourcesDirectory = dialog.FolderName;
 
-                    _resxFiles = Directory.GetFiles(
-                        resourcesDirectory,
-                        "*.resx",
-                        SearchOption.TopDirectoryOnly);
-                
+                    _resxFiles = reader.GetResxFiles(resourcesDirectory);
+
+
                     if (_resxFiles.Length == 0)
                     {
                         MessageBox.Show(
@@ -175,8 +148,8 @@ namespace ResourceManager
                         return;
                     }
 
-                    FolderOverlay.Visibility = Visibility.Collapsed;
-                    ResxSelectionOverlay.Visibility = Visibility.Visible;
+                    FolderOverlay.SetCurrentValue(VisibilityProperty, Visibility.Collapsed);
+                    ResxSelectionOverlay.SetCurrentValue(VisibilityProperty, Visibility.Visible);
                     LoadResxFiles();
 
                 }
@@ -193,16 +166,16 @@ namespace ResourceManager
 
         private void LoadResxFiles()
         {
-            BaseFileComboBox.ItemsSource = _resxFiles
+            BaseFileComboBox.SetCurrentValue(ItemsControl.ItemsSourceProperty, _resxFiles
                 .Select(System.IO.Path.GetFileName)
-                .ToList();
+                .ToList());
 
-            TargetFileComboBox.ItemsSource = _resxFiles
+            TargetFileComboBox.SetCurrentValue(ItemsControl.ItemsSourceProperty, _resxFiles
                 .Select(System.IO.Path.GetFileName)
-                .ToList();
+                .ToList());
 
-            BaseFileComboBox.SelectedIndex = 0;
-            TargetFileComboBox.SelectedIndex = _resxFiles.Length > 1 ? 1 : -1;
+            BaseFileComboBox.SetCurrentValue(System.Windows.Controls.Primitives.Selector.SelectedIndexProperty, 0);
+            TargetFileComboBox.SetCurrentValue(System.Windows.Controls.Primitives.Selector.SelectedIndexProperty, _resxFiles.Length > 1 ? 1 : -1);
         }
 
 
@@ -221,7 +194,7 @@ namespace ResourceManager
                 });
             }
 
-            TargetLanguageComboBox.SelectedValuePath = "Tag";
+            TargetLanguageComboBox.SetCurrentValue(System.Windows.Controls.Primitives.Selector.SelectedValuePathProperty, "Tag");
         }
 
         private void AddApiKey_Click(object sender, RoutedEventArgs e)
@@ -251,7 +224,7 @@ namespace ResourceManager
                 GeminiKeyStorage.Set(apiKey, false);
             }
             if (isInitialSetup)OpenFolderSelection();
-            else GeminiOverlay.Visibility = Visibility.Collapsed;
+            else GeminiOverlay.SetCurrentValue(VisibilityProperty, Visibility.Collapsed);
             _geminiConfigurationTask?.TrySetResult(true);
             _geminiConfigurationTask = null;
 
@@ -266,7 +239,7 @@ namespace ResourceManager
             }
             else
             {
-                GeminiOverlay.Visibility = Visibility.Collapsed;
+                GeminiOverlay.SetCurrentValue(VisibilityProperty, Visibility.Collapsed);
             }
 
             _geminiConfigurationTask?.TrySetResult(false);
@@ -276,8 +249,8 @@ namespace ResourceManager
         }
         private void OpenFolderSelection()
         {
-            GeminiOverlay.Visibility = Visibility.Collapsed;
-            FolderOverlay.Visibility = Visibility.Visible;
+            GeminiOverlay.SetCurrentValue(VisibilityProperty, Visibility.Collapsed);
+            FolderOverlay.SetCurrentValue(VisibilityProperty, Visibility.Visible);
         }
 
         private void GeminiApiKeyGuide_Click(object sender, RoutedEventArgs e)
@@ -289,9 +262,6 @@ namespace ResourceManager
 
             guideWindow.ShowDialog();
         }
-
-
-
 
         private async void ContinueConfigurationFiles_Click(object sender, RoutedEventArgs e)
         {
@@ -325,27 +295,26 @@ namespace ResourceManager
 
         public void ShowFolderConfiguration()
         {
-            FolderOverlay.Visibility = Visibility.Visible;
-            GeminiOverlay.Visibility = Visibility.Collapsed;
-            SettingsNavButton.IsChecked = false;
-            DashboardNavButton.IsChecked = true;
-
+            FolderOverlay.SetCurrentValue(VisibilityProperty, Visibility.Visible);
+            GeminiOverlay.SetCurrentValue(VisibilityProperty, Visibility.Collapsed);
+            SettingsNavButton.SetCurrentValue(System.Windows.Controls.Primitives.ToggleButton.IsCheckedProperty, false);
+            DashboardNavButton.SetCurrentValue(System.Windows.Controls.Primitives.ToggleButton.IsCheckedProperty, true);
         }
 
         public Task ShowGeminiKeyConfiguration()
         {
             isInitialSetup = false;
             ApiKeyPasswordBox.Clear();
-            RememberMeCheckBox.IsChecked = GeminiKeyStorage.SaveApiKeyLocally;
+            RememberMeCheckBox.SetCurrentValue(System.Windows.Controls.Primitives.ToggleButton.IsCheckedProperty, GeminiKeyStorage.SaveApiKeyLocally);
             _geminiConfigurationTask = new TaskCompletionSource<bool>();
-            GeminiOverlay.Visibility = Visibility.Visible;
+            GeminiOverlay.SetCurrentValue(VisibilityProperty, Visibility.Visible);
             return _geminiConfigurationTask.Task;
         }
 
         public void ChangeLoadingVisible()
         {
-            if(LoadingOverlay.Visibility == Visibility.Visible) LoadingOverlay.Visibility = Visibility.Collapsed;
-            else LoadingOverlay.Visibility = Visibility.Visible;
+            if(LoadingOverlay.Visibility == Visibility.Visible) LoadingOverlay.SetCurrentValue(VisibilityProperty, Visibility.Collapsed);
+            else LoadingOverlay.SetCurrentValue(VisibilityProperty, Visibility.Visible);
         }
     
     }

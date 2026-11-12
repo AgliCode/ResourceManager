@@ -1,6 +1,4 @@
 ﻿using ResourceManager.Core.Services;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace ResourceManager.TranslationApi.Services
 {
