@@ -15,7 +15,7 @@ public class TranslationApiClient
     public class TranslationApiItem
     {
         public string Key { get; set; } = string.Empty;
-        public string PolishText { get; set; } = string.Empty;
+        public string BaseText { get; set; } = string.Empty;
         public string? Comment { get; set; }
     }
 

@@ -15,10 +15,7 @@ namespace ResourceManager.Views
         private readonly ResourceReader _resourceReader = new();
         private List<NewLanguageEntry> entries = new();
         private readonly TranslationApiClient _translationApiClient = new();
-
-        private readonly LanguageService _languageService = new();
         private string? _outputFilePath;
-        private readonly ResxWriter _resxWriter = new();
         const int batchSize = 300;
         private readonly MainWindow _mainWindow;
 
@@ -46,7 +43,7 @@ namespace ResourceManager.Views
         {
             TargetLanguageComboBox.Items.Clear();
 
-            var languages = _languageService.GetAvailableLanguages();
+            var languages = LanguageService.GetAvailableLanguages();
 
             foreach (var language in languages)
             {
@@ -216,7 +213,7 @@ namespace ResourceManager.Views
                     new TranslationApiClient.TranslationApiItem
                     {
                         Key = entry.Name,
-                        PolishText = entry.Value ?? string.Empty,
+                        BaseText = entry.Value ?? string.Empty,
                         Comment = entry.Comment
                     }).ToList();
 
@@ -257,7 +254,7 @@ namespace ResourceManager.Views
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
 
-                _resxWriter.CreateTranslatedResx(
+                ResxWriter.CreateTranslatedResx(
                 _projectContext.BaseFilePath!,
                 _outputFilePath!,
                 selectedEntries);

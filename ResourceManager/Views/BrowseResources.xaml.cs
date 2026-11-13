@@ -29,7 +29,7 @@ namespace ResourceManager.Views
                 string? selectedFilePath = _projectContext.ResxFiles
                     .FirstOrDefault(path => System.IO.Path.GetFileName(path) == selectedFileName);
                 var resources = _resourceReader.ReadResources(selectedFilePath);
-                ResourcesDataGrid.ItemsSource = resources;
+                ResourcesDataGrid.SetCurrentValue(ItemsControl.ItemsSourceProperty, resources);
             }
             catch (Exception ex)
             {

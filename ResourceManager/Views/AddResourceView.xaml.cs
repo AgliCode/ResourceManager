@@ -69,7 +69,7 @@ namespace ResourceManager.Views
                     new()
                     {
                         Key = keyName,
-                        PolishText = neutralValue,
+                        BaseText = neutralValue,
                         Comment = comment
                     }
                 };

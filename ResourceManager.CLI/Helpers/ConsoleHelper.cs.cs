@@ -133,8 +133,7 @@ namespace ResourceManager.CLI.Helpers
 
         public string SelectLanguage()
         {
-            var languageService = new LanguageService();
-            var languages = languageService.GetAvailableLanguages();
+            var languages = LanguageService.GetAvailableLanguages();
 
             string targetLanguage = string.Empty;
 

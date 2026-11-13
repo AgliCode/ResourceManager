@@ -1,10 +1,5 @@
 ﻿using ResourceManager.Core.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace ResourceManager.CLI.Configuration
 {
@@ -17,8 +12,8 @@ namespace ResourceManager.CLI.Configuration
         {
             _projectContext = projectContext;
             string configFolder = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "ResourceManager");
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "ResourceManager");
 
             Directory.CreateDirectory(configFolder);
             _configPath = Path.Combine(configFolder, "project-config.json");

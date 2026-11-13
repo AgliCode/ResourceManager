@@ -13,7 +13,6 @@ namespace ResourceManager.Views
         private readonly ProjectContext _projectContext;
         private readonly GeminiKeyStorage _geminiKeyStorage;
         private readonly MainWindow _mainWindow;
-        private readonly LanguageService _languageService = new();
         public SettingsView(ProjectContext projectContext,GeminiKeyStorage geminiKeyStorage, MainWindow mainWindow)
         {
             InitializeComponent();
@@ -38,9 +37,6 @@ namespace ResourceManager.Views
                 .ToList()
                 .FindIndex(item => item.Tag?.ToString() == _projectContext.TargetLanguage);
 
-            UpdateApiKeyStatus();
-
-
             ProjectFolderTextBox.Text = _projectContext.ProjectDirectory;
             _mainWindow = mainWindow;
         }
@@ -48,7 +44,7 @@ namespace ResourceManager.Views
         {
             TargetLanguageComboBox.Items.Clear();
 
-            var languages = _languageService.GetAvailableLanguages();
+            var languages = LanguageService.GetAvailableLanguages();
 
             foreach (var language in languages)
             {
@@ -62,29 +58,6 @@ namespace ResourceManager.Views
             TargetLanguageComboBox.SetCurrentValue(System.Windows.Controls.Primitives.Selector.SelectedValuePathProperty, "Tag");
         }
 
-        private void UpdateApiKeyStatus()
-        {
-            if (string.IsNullOrWhiteSpace(_geminiKeyStorage.ReadApiKey()))
-            {
-                ApiKeyStatusBadge.Text = "Not configured";
-                ApiKeyStatusBadge.SetCurrentValue(TextBlock.ForegroundProperty, new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fc3838")));             
-            }
-            else
-            {
-                ApiKeyStatusBadge.Text = "Configured";
-                ApiKeyStatusBadge.SetCurrentValue(TextBlock.ForegroundProperty, new SolidColorBrush((Color)ColorConverter.ConvertFromString("#39734A")));
-            }
-            if (_geminiKeyStorage.SaveApiKeyLocally)
-            {
-               ApiKeyStorageStatusBadge.Text = "Configured";
-               ApiKeyStorageStatusBadge.SetCurrentValue(TextBlock.ForegroundProperty, new SolidColorBrush((Color)ColorConverter.ConvertFromString("#39734A")));
-            }
-            else
-            {
-                ApiKeyStorageStatusBadge.Text = "Not configured";
-                ApiKeyStorageStatusBadge.SetCurrentValue(TextBlock.ForegroundProperty, new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fc3838")));
-            }
-        }
         public void Change_Click(object sender, EventArgs e)
         {
             _mainWindow.ShowFolderConfiguration();
@@ -94,7 +67,6 @@ namespace ResourceManager.Views
         {
             _geminiKeyStorage.ClearApiKeyFromMemory();
             _geminiKeyStorage.DeleteSavedApiKey();
-            UpdateApiKeyStatus();
             _mainWindow.UpdateAddNewLanguageButtonStyle();
 
         }
@@ -102,7 +74,6 @@ namespace ResourceManager.Views
         private async void Configure_Click(object sender, RoutedEventArgs e)
         {
             await _mainWindow.ShowGeminiKeyConfiguration();
-            UpdateApiKeyStatus();
         }
 
         private void SaveChanges_Click(object sender, RoutedEventArgs e)
@@ -113,13 +84,10 @@ namespace ResourceManager.Views
             string[] _resxFiles = _projectContext.ResxFiles;
             string resourcesDirectory = _projectContext.ProjectDirectory;
             string baseFilePath = System.IO.Path.Combine(
-                System.IO.Path.GetDirectoryName(_resxFiles[0])!,
-                baseFileName);
+                System.IO.Path.GetDirectoryName(_resxFiles[0])!, baseFileName);
 
             string targetFilePath = System.IO.Path.Combine(
-                System.IO.Path.GetDirectoryName(_resxFiles[0])!,
-                targetFileName);
-
+                System.IO.Path.GetDirectoryName(_resxFiles[0])!, targetFileName);
 
             _projectContext.SetProject(resourcesDirectory, baseFilePath, targetFilePath, targetLanguage, _resxFiles);
             _mainWindow.UpdateCompleteTranslationsButtonStyle();

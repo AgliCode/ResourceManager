@@ -16,7 +16,6 @@ var geminiKeyStorage = new GeminiKeyStorage();
 var apiKeyStorageService = new ApiKeyStorageService();
 var translationApiClient = new TranslationApiClient();
 var reader = new ResourceReader();
-var writer = new ResxWriter();
 var consoleHelper = new ConsoleHelper();
 var configurationManager = new ProjectConfigurationManager(projectContext);
 
@@ -136,7 +135,7 @@ async Task Missing(bool AITranslate)
                     .Select(resource => new TranslationApiClient.TranslationApiItem
                     {
                         Key = resource.Name,
-                        PolishText = resource.Value,
+                        BaseText = resource.Value,
                         Comment = resource.Comment
                     })
                     .ToList();
@@ -214,7 +213,7 @@ async Task Missing(bool AITranslate)
             case "1":
                 try
                 {
-                    writer.SaveTranslationToResx(
+                    ResxWriter.SaveTranslationToResx(
                         aiTranslations,
                         projectContext.TargetFilePath);
 
@@ -265,7 +264,7 @@ async Task Missing(bool AITranslate)
                 {
                     try
                     {
-                        writer.SaveTranslationToResx(
+                        ResxWriter.SaveTranslationToResx(
                             approvedTranslations,
                             projectContext.TargetFilePath);
 

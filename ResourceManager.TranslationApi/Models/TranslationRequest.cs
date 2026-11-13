@@ -3,7 +3,7 @@
 public class TranslationRequest
 {
     public string TargetLanguage { get; set; } = "en-US";
-    public List<TranslationItem> Items { get; set; } = new();
+    public List<TranslationItem> Items { get; set; } = [];
 }
 
 public class TranslationItem

@@ -3,7 +3,7 @@ namespace ResourceManager.TranslationApi.Models;
 
 public class TranslationResponse
 {
-    public List<TranslationResult> Translations { get; set; } = new();
+    public List<TranslationResult> Translations { get; set; } = [];
 }
 
 public class TranslationResult

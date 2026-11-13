@@ -15,7 +15,6 @@ namespace ResourceManager
     {
         public ProjectContext ProjectContext { get; } = new();
         public GeminiKeyStorage GeminiKeyStorage { get; set; } = new();
-        private readonly LanguageService _languageService = new();
         private string[] _resxFiles = Array.Empty<string>();
         private string resourcesDirectory {  get; set; } = string.Empty;
         private TaskCompletionSource<bool>? _geminiConfigurationTask;
@@ -183,7 +182,7 @@ namespace ResourceManager
         {
             TargetLanguageComboBox.Items.Clear();
 
-            var languages = _languageService.GetAvailableLanguages();
+            var languages = LanguageService.GetAvailableLanguages();
 
             foreach (var language in languages)
             {

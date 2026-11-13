@@ -47,8 +47,7 @@ public class ApiKeyStorageService
 
     public void Delete()
     {
-        if (File.Exists(_filePath))
-            File.Delete(_filePath);
+        if (File.Exists(_filePath)) File.Delete(_filePath);
     }
     public bool Exists()
     {

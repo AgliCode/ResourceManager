@@ -18,7 +18,6 @@ namespace ResourceManager.Views
         private int actual_id = 0;
         private readonly TranslationApiClient _translationApiClient = new();
         private Dictionary<string, string> aiTranslations = new();
-        private readonly ResxWriter _resxWriter = new();
         private readonly ProjectContext _projectContext;
         private readonly GeminiKeyStorage _geminiKeyStorage;
         const int batchSize = 300;
@@ -67,7 +66,7 @@ namespace ResourceManager.Views
                         .Select(resource => new TranslationApiClient.TranslationApiItem
                         {
                             Key = resource.Name,
-                            PolishText = resource.Value,
+                            BaseText = resource.Value,
                             Comment = resource.Comment
                         })
                         .ToList();
@@ -231,7 +230,7 @@ namespace ResourceManager.Views
 
             approvedTranslations[resource.Name] = translation;
 
-            _resxWriter.SaveTranslationToResx(
+            ResxWriter.SaveTranslationToResx(
                 approvedTranslations,
                 _projectContext.TargetFilePath);
 
@@ -259,7 +258,7 @@ namespace ResourceManager.Views
                 translationsToSave[translation.Key] = translation.Value;
             }
 
-            _resxWriter.SaveTranslationToResx(
+            ResxWriter.SaveTranslationToResx(
                 translationsToSave,
                 _projectContext.TargetFilePath);
         }

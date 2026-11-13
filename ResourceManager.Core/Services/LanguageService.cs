@@ -4,7 +4,7 @@ namespace ResourceManager.Core.Services
 {
     public class LanguageService
     {
-        public List<CultureInfo> GetAvailableLanguages()
+        public static List<CultureInfo> GetAvailableLanguages()
         {
             return CultureInfo
                 .GetCultures(CultureTypes.SpecificCultures)
