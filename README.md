@@ -20,3 +20,6 @@ Aplikacja pomaga w uzupełnianiu brakujących tłumaczeń, edycji wpisów oraz o
 - WPF (Windows Presentation Foundation)
 - XML / RESX
 
+## Documentation
+
+- [CLI User Guide](Documentation/CLI-GUIDE.md)
