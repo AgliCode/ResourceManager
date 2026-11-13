@@ -11,9 +11,13 @@
 
   <ItemGroup>
     <None Remove="Fonts\MaterialSymbolsRounded-VariableFont_FILL,GRAD,opsz,wght.ttf" />
+    <None Remove="Instruction\GeminiApiKeyGuide.html" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Instruction\GeminiApiKeyGuide.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="ResourceManager.ico" />
   </ItemGroup>
 
@@ -34,9 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Instruction\GeminiApiKeyGuide.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="Instruction\images\step1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
